@@ -90,6 +90,7 @@ app.use(errorHandler);
 // START SERVER
 // ════════════════════════════════
 app.listen(PORT, () => {
+  console.log("DATABASE_URL:", process.env.DATABASE_URL ? "FOUND" : "MISSING");
   console.log('');
   console.log('⚽  KickOff server running');
   console.log(`🌍 Server running on port ${PORT}`);

@@ -19,9 +19,8 @@ pool.connect()
   })
   .catch(err => {
     console.error('❌ Database connection failed:', err.message);
-    process.exit(1);
   });
-
+  
 // ── Graceful shutdown ──
 process.on('SIGINT', () => pool.end(() => process.exit(0)));
 process.on('SIGTERM', () => pool.end(() => process.exit(0)));
