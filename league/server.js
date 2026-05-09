@@ -14,6 +14,7 @@ const authRoutes     = require('./routes/auth');
 const leagueRoutes   = require('./routes/leagues');
 const matchRoutes    = require('./routes/matches');
 const knockoutRoutes = require('./routes/knockout');
+const dashboardRoutes = require('./routes/dashboard');
 
 // ── Middleware imports ──
 const errorHandler = require('./middleware/errorHandler');
@@ -63,6 +64,7 @@ app.use('/api/auth',     authRoutes);
 app.use('/api/leagues',  leagueRoutes);
 app.use('/api/matches',  matchRoutes);
 app.use('/api/knockout', knockoutRoutes);
+app.use('/api/dashboard', dashboardRoutes);
 
 // ── API health check ──
 app.get('/api/health', (req, res) => {
