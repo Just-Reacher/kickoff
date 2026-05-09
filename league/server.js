@@ -33,9 +33,12 @@ app.use(helmet({
 
 // CORS — allow frontend to call the API
 app.use(cors({
-  origin: process.env.NODE_ENV === 'production'
-    ? process.env.FRONTEND_URL   // set this in .env for production
-    : '*'
+  origin: [
+    'https://kickoff-nzpg.onrender.com',
+    'http://127.0.0.1:5500',
+    'http://localhost:5500'
+  ],
+  credentials: true
 }));
 
 // Body parsing
@@ -90,7 +93,6 @@ app.use(errorHandler);
 // START SERVER
 // ════════════════════════════════
 app.listen(PORT, () => {
-  console.log("DATABASE_URL:", process.env.DATABASE_URL ? "FOUND" : "MISSING");
   console.log('');
   console.log('⚽  KickOff server running');
   console.log(`🌍 Server running on port ${PORT}`);
