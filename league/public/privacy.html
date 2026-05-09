@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Privacy Policy — KickOff</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="icon" href="assets/favicon.ico" type="image/x-icon">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy:         #0a1628;
+      --navy-mid:     #0d1f3c;
+      --navy-light:   #152845;
+      --navy-card:    #101d35;
+      --blue:         #0066ff;
+      --blue-dim:     rgba(0,102,255,0.14);
+      --gold:         #ffd700;
+      --gold-dim:     rgba(255,215,0,0.11);
+      --gold-border:  rgba(255,215,0,0.25);
+      --white:        #ffffff;
+      --white-dim:    rgba(255,255,255,0.5);
+      --white-faint:  rgba(255,255,255,0.06);
+      --border:       rgba(255,255,255,0.08);
+      --border-light: rgba(255,255,255,0.14);
+      --success:      #00cc66;
+      --success-dim:  rgba(0,204,102,0.12);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Barlow', sans-serif;
+      background: var(--navy);
+      color: var(--white);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── NAV ── */
+    .nav {
+      position: sticky; top: 0; z-index: 200;
+      background: rgba(10,22,40,0.92);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+      height: 62px;
+      display: flex; align-items: center;
+      padding: 0 2rem; gap: 1rem;
+    }
+    .nav-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+    .nav-brand-icon { width: 28px; height: 28px; }
+    .nav-brand-name { font-family: 'Bebas Neue', sans-serif; font-size: 1.45rem; letter-spacing: 3px; color: var(--white); }
+    .nav-brand-name span { color: var(--gold); }
+    .nav-back {
+      margin-left: auto;
+      display: flex; align-items: center; gap: 7px;
+      text-decoration: none; font-size: 0.8rem; font-weight: 600;
+      letter-spacing: 1.5px; text-transform: uppercase;
+      color: var(--white-dim); transition: color 0.2s;
+    }
+    .nav-back:hover { color: var(--white); }
+    .nav-back svg { width: 14px; height: 14px; }
+
+    /* ── HERO ── */
+    .hero {
+      background: var(--navy-mid);
+      border-bottom: 1px solid var(--border);
+      padding: 3.5rem 2rem 3rem;
+      text-align: center;
+      position: relative; overflow: hidden;
+    }
+    .hero::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+      background: linear-gradient(to right, var(--success), var(--blue));
+    }
+    .hero-grid {
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+      background-size: 50px 50px; pointer-events: none;
+    }
+    .hero-tag { font-size: 0.68rem; font-weight: 600; letter-spacing: 3px; text-transform: uppercase; color: var(--success); margin-bottom: 0.75rem; position: relative; z-index: 1; }
+    .hero-title { font-family: 'Bebas Neue', sans-serif; font-size: clamp(2.5rem, 6vw, 4rem); letter-spacing: 3px; color: var(--white); position: relative; z-index: 1; margin-bottom: 0.75rem; }
+    .hero-title span { color: var(--gold); }
+    .hero-meta { font-size: 0.82rem; font-weight: 300; color: var(--white-dim); position: relative; z-index: 1; }
+
+    /* ── LAYOUT ── */
+    .layout {
+      max-width: 1000px; width: 100%; margin: 0 auto;
+      padding: 3rem 2rem 5rem;
+      display: grid; grid-template-columns: 220px 1fr;
+      gap: 3rem; align-items: start;
+    }
+
+    /* ── SIDEBAR TOC ── */
+    .toc {
+      position: sticky; top: 80px;
+      background: var(--navy-card); border: 1px solid var(--border);
+      border-radius: 10px; padding: 1.2rem;
+    }
+    .toc-title { font-family: 'Bebas Neue', sans-serif; font-size: 0.85rem; letter-spacing: 2px; color: var(--white-dim); margin-bottom: 0.85rem; padding-bottom: 0.6rem; border-bottom: 1px solid var(--border); }
+    .toc-list { list-style: none; display: flex; flex-direction: column; gap: 0.1rem; }
+    .toc-list a { display: block; padding: 0.4rem 0.6rem; font-size: 0.78rem; font-weight: 400; color: var(--white-dim); text-decoration: none; border-radius: 5px; transition: background 0.15s, color 0.15s; line-height: 1.4; }
+    .toc-list a:hover { background: var(--white-faint); color: var(--white); }
+    .toc-list a.active { background: var(--blue-dim); color: var(--blue); }
+
+    /* ── CONTENT ── */
+    .content { min-width: 0; }
+
+    .section { margin-bottom: 3rem; animation: fadeUp 0.5s ease both; scroll-margin-top: 80px; }
+    .section-num { font-size: 0.68rem; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: var(--success); margin-bottom: 0.4rem; }
+    .section-title { font-family: 'Bebas Neue', sans-serif; font-size: 1.6rem; letter-spacing: 2px; color: var(--white); margin-bottom: 1rem; padding-bottom: 0.6rem; border-bottom: 1px solid var(--border); }
+    .section p { font-size: 0.92rem; font-weight: 300; color: rgba(255,255,255,0.72); line-height: 1.9; margin-bottom: 1rem; }
+    .section p:last-child { margin-bottom: 0; }
+    .section ul { list-style: none; margin: 0.75rem 0 1rem; padding: 0; display: flex; flex-direction: column; gap: 0.5rem; }
+    .section ul li { display: flex; align-items: flex-start; gap: 10px; font-size: 0.9rem; font-weight: 300; color: rgba(255,255,255,0.72); line-height: 1.7; }
+    .section ul li::before { content: '—'; color: var(--success); flex-shrink: 0; margin-top: 1px; opacity: 0.7; }
+    .section strong { color: var(--white); font-weight: 600; }
+
+    .highlight-box {
+      background: var(--blue-dim); border: 1px solid rgba(0,102,255,0.2); border-left: 3px solid var(--blue);
+      border-radius: 6px; padding: 1rem 1.2rem; margin: 1rem 0;
+      font-size: 0.88rem; font-weight: 300; color: rgba(255,255,255,0.7); line-height: 1.7;
+    }
+    .highlight-box.green {
+      background: var(--success-dim); border-color: rgba(0,204,102,0.2); border-left-color: var(--success);
+    }
+    .highlight-box.gold {
+      background: var(--gold-dim); border-color: var(--gold-border); border-left-color: var(--gold);
+    }
+    .highlight-box strong { color: var(--white); }
+
+    /* data table */
+    .data-table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 0.85rem; }
+    .data-table th { text-align: left; font-size: 0.65rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--white-dim); padding: 0.6rem 0.85rem; background: var(--navy-mid); border-bottom: 1px solid var(--border); }
+    .data-table td { padding: 0.7rem 0.85rem; border-bottom: 1px solid var(--border); color: rgba(255,255,255,0.72); font-weight: 300; vertical-align: top; line-height: 1.6; }
+    .data-table tr:last-child td { border-bottom: none; }
+    .data-table tr:hover td { background: var(--white-faint); }
+    .data-table td:first-child { font-weight: 500; color: var(--white); white-space: nowrap; }
+
+    .last-updated { display: inline-flex; align-items: center; gap: 6px; background: rgba(0,204,102,0.1); border: 1px solid rgba(0,204,102,0.25); border-radius: 100px; padding: 0.3rem 0.9rem; font-size: 0.72rem; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: var(--success); margin-bottom: 2rem; }
+
+    /* ── FOOTER ── */
+    footer { background: var(--navy-mid); border-top: 1px solid var(--border); padding: 2rem; text-align: center; font-size: 0.78rem; font-weight: 300; color: rgba(255,255,255,0.25); display: flex; align-items: center; justify-content: center; gap: 1.5rem; flex-wrap: wrap; }
+    footer a { color: rgba(255,255,255,0.35); text-decoration: none; }
+    footer a:hover { color: var(--white); }
+
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+
+    @media (max-width: 768px) {
+      .layout { grid-template-columns: 1fr; padding: 2rem 1rem 4rem; }
+      .toc { display: none; }
+      .data-table { display: block; overflow-x: auto; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav class="nav">
+    <a href="index.html" class="nav-brand">
+      <svg class="nav-brand-icon" viewBox="0 0 28 28" fill="none">
+        <circle cx="14" cy="14" r="13" stroke="#ffd700" stroke-width="1.3"/>
+        <circle cx="14" cy="14" r="6"  stroke="#0066ff" stroke-width="1.3"/>
+        <line x1="14" y1="1"  x2="14" y2="27" stroke="#ffd700" stroke-width="1" opacity="0.4"/>
+        <line x1="1"  y1="14" x2="27" y2="14" stroke="#ffd700" stroke-width="1" opacity="0.4"/>
+        <circle cx="14" cy="14" r="2" fill="#0066ff"/>
+      </svg>
+      <span class="nav-brand-name">Kick<span>Off</span></span>
+    </a>
+    <a href="register.html" class="nav-back">
+      <svg viewBox="0 0 14 14" fill="none"><path d="M9 2L4 7L9 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Back to Register
+    </a>
+  </nav>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-grid"></div>
+    <div class="hero-tag">Legal</div>
+    <h1 class="hero-title">Privacy <span>Policy</span></h1>
+    <p class="hero-meta">Effective Date: January 1, 2025 &nbsp;·&nbsp; Last Updated: May 2025</p>
+  </div>
+
+  <!-- LAYOUT -->
+  <div class="layout">
+
+    <!-- SIDEBAR TOC -->
+    <nav class="toc">
+      <div class="toc-title">Contents</div>
+      <ul class="toc-list">
+        <li><a href="#p1">1. Introduction</a></li>
+        <li><a href="#p2">2. Data We Collect</a></li>
+        <li><a href="#p3">3. How We Use Data</a></li>
+        <li><a href="#p4">4. Data Sharing</a></li>
+        <li><a href="#p5">5. Data Storage</a></li>
+        <li><a href="#p6">6. Cookies</a></li>
+        <li><a href="#p7">7. Your Rights</a></li>
+        <li><a href="#p8">8. Data Retention</a></li>
+        <li><a href="#p9">9. Children</a></li>
+        <li><a href="#p10">10. Changes</a></li>
+        <li><a href="#p11">11. Contact</a></li>
+      </ul>
+    </nav>
+
+    <!-- CONTENT -->
+    <div class="content">
+
+      <div class="last-updated">Last Updated — May 2025</div>
+
+      <div class="highlight-box green">
+        <strong>Your privacy matters to us.</strong> We collect only what we need to run the platform and we never sell your personal data to anyone. This policy explains exactly what we collect, why, and how you can control it.
+      </div>
+
+      <!-- 1 -->
+      <div class="section" id="p1">
+        <div class="section-num">Section 01</div>
+        <h2 class="section-title">Introduction</h2>
+        <p>KickOff ("we", "our", "us") is committed to protecting your personal information. This Privacy Policy explains how we collect, use, store and share data when you use our platform at kickoff.gg and any related services.</p>
+        <p>By using KickOff, you consent to the data practices described in this policy. If you do not agree, please do not use the platform.</p>
+        <p>This policy applies to all users — whether you are creating an account, running a league, participating as a player, or simply visiting the site.</p>
+      </div>
+
+      <!-- 2 -->
+      <div class="section" id="p2">
+        <div class="section-num">Section 02</div>
+        <h2 class="section-title">Data We Collect</h2>
+        <p>We collect different types of information depending on how you use KickOff:</p>
+
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Data Type</th>
+              <th>What We Collect</th>
+              <th>Why</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Account Info</td>
+              <td>First name, last name, username, email address, hashed password</td>
+              <td>To create and manage your account</td>
+            </tr>
+            <tr>
+              <td>League Data</td>
+              <td>League names, team names, fixture schedules, match results, standings</td>
+              <td>To operate the league management features</td>
+            </tr>
+            <tr>
+              <td>Usage Data</td>
+              <td>Pages visited, actions taken, timestamps, browser type, IP address</td>
+              <td>To improve platform performance and security</td>
+            </tr>
+            <tr>
+              <td>Device Info</td>
+              <td>Device type, operating system, screen resolution</td>
+              <td>To optimise the interface for your device</td>
+            </tr>
+            <tr>
+              <td>Communications</td>
+              <td>Messages sent to our support team</td>
+              <td>To respond to your enquiries</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <p>We do not collect payment information, location data, or sensitive personal data such as health, religion, or political views.</p>
+      </div>
+
+      <!-- 3 -->
+      <div class="section" id="p3">
+        <div class="section-num">Section 03</div>
+        <h2 class="section-title">How We Use Your Data</h2>
+        <p>We use the data we collect to:</p>
+        <ul>
+          <li>Create and maintain your account and profile</li>
+          <li>Operate league management features including fixtures, standings and results</li>
+          <li>Send essential service communications such as account verification emails</li>
+          <li>Ensure the security and integrity of the platform</li>
+          <li>Investigate and prevent fraud, abuse, and violations of our Terms of Service</li>
+          <li>Improve and develop new features based on how users interact with the platform</li>
+          <li>Respond to support requests and customer service enquiries</li>
+        </ul>
+        <p>We do not use your data for advertising purposes and we do not build advertising profiles based on your activity.</p>
+        <div class="highlight-box green">
+          <strong>No ads, ever.</strong> KickOff does not show advertisements, does not partner with advertisers, and does not sell your data to marketing companies.
+        </div>
+      </div>
+
+      <!-- 4 -->
+      <div class="section" id="p4">
+        <div class="section-num">Section 04</div>
+        <h2 class="section-title">Data Sharing</h2>
+        <p>We do not sell, rent, or trade your personal data. We may share data only in the following limited circumstances:</p>
+        <ul>
+          <li><strong>With other league participants:</strong> Your username and team name are visible to other players in leagues you join. This is necessary for the platform to function.</li>
+          <li><strong>With service providers:</strong> We work with trusted infrastructure providers (such as hosting and database services) who process data on our behalf under strict agreements.</li>
+          <li><strong>For legal compliance:</strong> We may disclose data where required by law, court order, or to protect the rights and safety of users or the public.</li>
+          <li><strong>In a business transfer:</strong> If KickOff is acquired or merged, your data may be transferred as part of that transaction, with continued protection under this policy.</li>
+        </ul>
+        <p>All third-party service providers are contractually required to handle your data securely and only for the purposes we specify.</p>
+      </div>
+
+      <!-- 5 -->
+      <div class="section" id="p5">
+        <div class="section-num">Section 05</div>
+        <h2 class="section-title">Data Storage & Security</h2>
+        <p>Your data is stored on secure servers. We implement industry-standard security measures including:</p>
+        <ul>
+          <li>Encrypted data transmission using HTTPS/TLS</li>
+          <li>Passwords stored as bcrypt hashes — we never store plain-text passwords</li>
+          <li>Access controls limiting who within our team can access user data</li>
+          <li>Regular security reviews and vulnerability assessments</li>
+          <li>JWT-based authentication with appropriate expiry periods</li>
+        </ul>
+        <p>While we take security seriously, no system is completely immune to breaches. In the event of a data breach affecting your personal information, we will notify you in accordance with applicable law.</p>
+        <div class="highlight-box">
+          <strong>Your password is never readable.</strong> We store only a one-way bcrypt hash of your password. Neither our team nor any system can read your actual password.
+        </div>
+      </div>
+
+      <!-- 6 -->
+      <div class="section" id="p6">
+        <div class="section-num">Section 06</div>
+        <h2 class="section-title">Cookies & Local Storage</h2>
+        <p>KickOff uses browser storage technologies to keep you logged in and improve your experience:</p>
+        <ul>
+          <li><strong>Authentication tokens:</strong> Stored in localStorage or sessionStorage to keep you logged in across sessions</li>
+          <li><strong>Session preferences:</strong> We may store UI preferences such as your selected league to avoid you having to re-select on each visit</li>
+        </ul>
+        <p>We do not use third-party tracking cookies or advertising cookies. You can clear your browser storage at any time through your browser settings, which will log you out of the platform.</p>
+      </div>
+
+      <!-- 7 -->
+      <div class="section" id="p7">
+        <div class="section-num">Section 07</div>
+        <h2 class="section-title">Your Rights</h2>
+        <p>Depending on your location, you may have the following rights over your personal data:</p>
+        <ul>
+          <li><strong>Access:</strong> Request a copy of the personal data we hold about you</li>
+          <li><strong>Correction:</strong> Ask us to correct inaccurate or incomplete data</li>
+          <li><strong>Deletion:</strong> Request that we delete your account and associated data</li>
+          <li><strong>Portability:</strong> Request your data in a structured, machine-readable format</li>
+          <li><strong>Objection:</strong> Object to certain uses of your data</li>
+          <li><strong>Withdrawal:</strong> Withdraw consent where processing is based on consent</li>
+        </ul>
+        <p>To exercise any of these rights, contact us at <span style="color:var(--blue)">privacy@kickoff.gg</span>. We will respond within 30 days.</p>
+        <div class="highlight-box green">
+          <strong>Account deletion.</strong> You can delete your account at any time. When you do, we will remove your personal data within 30 days, except where we are legally required to retain it.
+        </div>
+      </div>
+
+      <!-- 8 -->
+      <div class="section" id="p8">
+        <div class="section-num">Section 08</div>
+        <h2 class="section-title">Data Retention</h2>
+        <p>We retain your personal data for as long as your account is active or as needed to provide our services. Specifically:</p>
+        <ul>
+          <li>Account data is retained while your account exists and for up to 30 days after deletion</li>
+          <li>League and match data may be retained in anonymised form for platform analytics after account deletion</li>
+          <li>Support communications are retained for up to 2 years</li>
+          <li>Usage logs are retained for up to 12 months for security purposes</li>
+        </ul>
+        <p>After retention periods expire, data is securely deleted or anonymised.</p>
+      </div>
+
+      <!-- 9 -->
+      <div class="section" id="p9">
+        <div class="section-num">Section 09</div>
+        <h2 class="section-title">Children's Privacy</h2>
+        <p>KickOff is not directed at children under the age of 13. We do not knowingly collect personal information from children under 13.</p>
+        <p>If you are a parent or guardian and believe your child has provided us with personal information, please contact us immediately at <span style="color:var(--blue)">privacy@kickoff.gg</span> and we will take steps to delete that information.</p>
+      </div>
+
+      <!-- 10 -->
+      <div class="section" id="p10">
+        <div class="section-num">Section 10</div>
+        <h2 class="section-title">Changes to This Policy</h2>
+        <p>We may update this Privacy Policy from time to time to reflect changes in our practices or applicable law. When we make material changes, we will:</p>
+        <ul>
+          <li>Update the "Last Updated" date at the top of this page</li>
+          <li>Notify active users via email where the changes are significant</li>
+          <li>Where required by law, obtain your consent before processing data in new ways</li>
+        </ul>
+        <p>We encourage you to review this policy periodically. Your continued use of KickOff after changes take effect constitutes acceptance of the updated policy.</p>
+      </div>
+
+      <!-- 11 -->
+      <div class="section" id="p11">
+        <div class="section-num">Section 11</div>
+        <h2 class="section-title">Contact Us</h2>
+        <p>If you have questions, concerns, or requests regarding this Privacy Policy or how we handle your data, please get in touch:</p>
+        <div class="highlight-box gold">
+          <strong>KickOff Privacy Team</strong><br/>
+          Email: <span style="color:var(--blue)">privacy@kickoff.gg</span><br/>
+          General support: <span style="color:var(--blue)">support@kickoff.gg</span><br/><br/>
+          We aim to respond to all privacy requests within <strong>30 days</strong>.
+        </div>
+        <p>You also have the right to lodge a complaint with your local data protection authority if you believe we have not handled your data appropriately.</p>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <span>© 2025 KickOff. All rights reserved.</span>
+    <a href="terms.html">Terms of Service</a>
+    <a href="privacy.html">Privacy Policy</a>
+    <a href="index.html">Home</a>
+  </footer>
+
+  <script src="js/legal.js"></script>
+</body>
+</html>

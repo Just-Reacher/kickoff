@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Create Account — KickOff</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="icon" href="assets/favicon.ico" type="image/x-icon">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy:         #0a1628;
+      --navy-mid:     #0d1f3c;
+      --navy-light:   #152845;
+      --navy-card:    #101d35;
+      --blue:         #0066ff;
+      --blue-dim:     rgba(0,102,255,0.14);
+      --blue-glow:    rgba(0,102,255,0.28);
+      --gold:         #ffd700;
+      --gold-dim:     rgba(255,215,0,0.11);
+      --gold-border:  rgba(255,215,0,0.25);
+      --white:        #ffffff;
+      --white-dim:    rgba(255,255,255,0.5);
+      --border:       rgba(255,255,255,0.08);
+      --border-focus: rgba(0,102,255,1);
+      --error:        #ff4d4d;
+      --error-dim:    rgba(255,77,77,0.12);
+      --success:      #00cc66;
+      --success-dim:  rgba(0,204,102,0.12);
+    }
+
+    html, body { height: 100%; }
+
+    body {
+      font-family: 'Barlow', sans-serif;
+      background: var(--navy);
+      color: var(--white);
+      min-height: 100vh;
+      display: flex;
+      overflow-x: hidden;
+    }
+
+    /* ── LEFT PANEL ── */
+    .left-panel {
+      width: 44%;
+      background: var(--navy-mid);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 3rem;
+      overflow: hidden;
+      border-right: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+
+    .grid-bg {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+      background-size: 50px 50px;
+    }
+
+    .gold-line {
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(to right, var(--gold), transparent 55%);
+    }
+
+    .blob-blue {
+      position: absolute;
+      top: -80px; right: -80px;
+      width: 380px; height: 380px;
+      background: radial-gradient(circle, rgba(0,102,255,0.14) 0%, transparent 65%);
+      pointer-events: none;
+    }
+
+    .blob-gold {
+      position: absolute;
+      bottom: -60px; left: -60px;
+      width: 280px; height: 280px;
+      background: radial-gradient(circle, rgba(255,215,0,0.07) 0%, transparent 65%);
+      pointer-events: none;
+    }
+
+    .pitch-art {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 460px;
+      opacity: 0.045;
+      pointer-events: none;
+    }
+
+    .panel-top {
+      position: relative;
+      z-index: 2;
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--white-dim);
+      transition: color 0.2s;
+      margin-bottom: 2.5rem;
+    }
+
+    .back-link:hover { color: var(--white); }
+    .back-link svg { width: 14px; height: 14px; }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-icon { width: 36px; height: 36px; }
+
+    .brand-name {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2rem;
+      letter-spacing: 3px;
+      color: var(--white);
+    }
+
+    .brand-name span { color: var(--gold); }
+
+    .panel-middle {
+      position: relative;
+      z-index: 2;
+    }
+
+    .panel-headline {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(2.8rem, 4vw, 4rem);
+      line-height: 0.93;
+      letter-spacing: 2px;
+      color: var(--white);
+      margin-bottom: 1.3rem;
+    }
+
+    .panel-headline .gold { color: var(--gold); }
+    .panel-headline .blue { color: var(--blue); }
+
+    .panel-sub {
+      font-size: 0.9rem;
+      font-weight: 300;
+      color: var(--white-dim);
+      line-height: 1.85;
+      max-width: 300px;
+      margin-bottom: 2.2rem;
+    }
+
+    /* what you can do after signup */
+    .after-signup {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .after-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 0.9rem 1rem;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: rgba(255,255,255,0.02);
+      transition: border-color 0.2s;
+    }
+
+    .after-item:hover { border-color: rgba(255,255,255,0.14); }
+
+    .after-icon {
+      width: 32px; height: 32px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .after-icon.gold-bg { background: var(--gold-dim); border: 1px solid var(--gold-border); }
+    .after-icon.blue-bg { background: var(--blue-dim); border: 1px solid rgba(0,102,255,0.28); }
+    .after-icon svg { width: 14px; height: 14px; }
+    
+    .after-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 0.95rem;
+      letter-spacing: 1.5px;
+      color: var(--white);
+    }
+
+    .after-desc {
+      font-size: 0.73rem;
+      font-weight: 300;
+      color: var(--white-dim);
+      margin-top: 1px;
+      line-height: 1.4;
+    }
+
+    .panel-bottom {
+      position: relative;
+      z-index: 2;
+      border-top: 1px solid var(--border);
+      padding-top: 1.5rem;
+    }
+
+    .signin-prompt {
+      font-size: 0.84rem;
+      font-weight: 300;
+      color: var(--white-dim);
+    }
+
+    .signin-prompt a {
+      color: var(--blue);
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .signin-prompt a:hover { text-decoration: underline; }
+
+    /* ── RIGHT PANEL ── */
+    .right-panel {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 3rem 4rem;
+      position: relative;
+      overflow-y: auto;
+    }
+
+    .right-panel::before {
+      content: '';
+      position: absolute;
+      top: 40%; right: 15%;
+      width: 320px; height: 320px;
+      background: radial-gradient(circle, rgba(0,102,255,0.05) 0%, transparent 65%);
+      pointer-events: none;
+    }
+
+    .form-box {
+      width: 100%;
+      max-width: 420px;
+      position: relative;
+      z-index: 1;
+      animation: fadeUp 0.55s 0.1s ease both;
+    }
+
+    .form-heading {
+      margin-bottom: 2.2rem;
+    }
+
+    .form-heading h1 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2.6rem;
+      letter-spacing: 2px;
+      line-height: 1;
+      color: var(--white);
+      margin-bottom: 0.45rem;
+    }
+
+    .form-heading p {
+      font-size: 0.88rem;
+      font-weight: 300;
+      color: var(--white-dim);
+      line-height: 1.6;
+    }
+
+    .form-heading p a {
+      color: var(--blue);
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .form-heading p a:hover { text-decoration: underline; }
+
+    /* global error */
+    .global-error {
+      display: none;
+      background: var(--error-dim);
+      border: 1px solid rgba(255,77,77,0.28);
+      border-left: 3px solid var(--error);
+      border-radius: 6px;
+      padding: 0.75rem 1rem;
+      font-size: 0.84rem;
+      color: var(--error);
+      margin-bottom: 1.5rem;
+      line-height: 1.5;
+    }
+
+    /* form layout */
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+    }
+
+    .form-group { margin-bottom: 1.2rem; }
+
+    label {
+      display: block;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--white-dim);
+      margin-bottom: 0.45rem;
+    }
+
+    .input-wrap { position: relative; }
+
+    .input-icon {
+      position: absolute;
+      left: 13px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 15px; height: 15px;
+      opacity: 0.28;
+      pointer-events: none;
+      transition: opacity 0.2s;
+    }
+
+    .form-group:focus-within .input-icon { opacity: 0.6; }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="password"] {
+      width: 100%;
+      padding: 0.78rem 1rem 0.78rem 2.5rem;
+      background: var(--navy-card);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-family: 'Barlow', sans-serif;
+      font-size: 0.93rem;
+      color: var(--white);
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+    }
+
+    input::placeholder { color: rgba(255,255,255,0.18); }
+    input:hover:not(:focus) { border-color: rgba(255,255,255,0.14); }
+
+    input:focus {
+      border-color: var(--blue);
+      background: var(--navy-light);
+      box-shadow: 0 0 0 3px rgba(0,102,255,0.14);
+    }
+
+    input.has-error {
+      border-color: var(--error);
+      box-shadow: 0 0 0 3px var(--error-dim);
+    }
+
+    input.has-success { border-color: var(--success); }
+
+    .pw-toggle {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      color: var(--white-dim);
+      display: flex;
+      align-items: center;
+      transition: color 0.2s;
+    }
+
+    .pw-toggle:hover { color: var(--white); }
+    .pw-toggle svg { width: 15px; height: 15px; }
+
+    .field-error {
+      display: none;
+      font-size: 0.74rem;
+      color: var(--error);
+      margin-top: 0.38rem;
+      padding-left: 2px;
+    }
+
+    /* password strength bar */
+    .pw-strength {
+      margin-top: 0.55rem;
+      display: none;
+    }
+
+    .strength-track {
+      height: 3px;
+      background: var(--border);
+      border-radius: 2px;
+      overflow: hidden;
+      margin-bottom: 5px;
+      display: flex;
+      gap: 3px;
+    }
+
+    .strength-seg {
+      flex: 1;
+      height: 100%;
+      border-radius: 2px;
+      background: transparent;
+      transition: background 0.3s;
+    }
+
+    .strength-seg.weak   { background: var(--error); }
+    .strength-seg.fair   { background: #ff9500; }
+    .strength-seg.good   { background: #ffd700; }
+    .strength-seg.strong { background: var(--success); }
+
+    .strength-text {
+      font-size: 0.72rem;
+      color: var(--white-dim);
+    }
+
+    /* username / display name hint */
+    .input-hint {
+      font-size: 0.72rem;
+      color: rgba(255,255,255,0.28);
+      margin-top: 0.35rem;
+      padding-left: 2px;
+      font-weight: 300;
+    }
+
+    /* divider */
+    .section-divider {
+      height: 1px;
+      background: var(--border);
+      margin: 1.5rem 0 1.3rem;
+    }
+
+    .section-label {
+      font-size: 0.68rem;
+      font-weight: 600;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.25);
+      margin-bottom: 1.1rem;
+    }
+
+    /* terms */
+    .terms-wrap {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin-bottom: 1.6rem;
+      margin-top: 0.4rem;
+    }
+
+    .terms-wrap input[type="checkbox"] {
+      width: 16px; height: 16px;
+      padding: 0;
+      accent-color: var(--blue);
+      cursor: pointer;
+      margin-top: 3px;
+      flex-shrink: 0;
+    }
+
+    .terms-wrap label {
+      font-size: 0.8rem;
+      letter-spacing: 0;
+      text-transform: none;
+      color: var(--white-dim);
+      font-weight: 300;
+      line-height: 1.55;
+      cursor: pointer;
+    }
+
+    .terms-wrap label a {
+      color: var(--blue);
+      text-decoration: none;
+    }
+
+    .terms-wrap label a:hover { text-decoration: underline; }
+
+    .field-error.terms-error { margin-top: -1rem; margin-bottom: 1rem; }
+
+    /* submit button */
+    .btn-submit {
+      width: 100%;
+      padding: 0.9rem;
+      background: var(--blue);
+      border: none;
+      border-radius: 6px;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.2rem;
+      letter-spacing: 3px;
+      color: var(--white);
+      cursor: pointer;
+      transition: background 0.2s, box-shadow 0.2s, transform 0.1s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .btn-submit:hover:not(:disabled) {
+      background: #0055dd;
+      box-shadow: 0 0 28px rgba(0,102,255,0.35);
+      transform: translateY(-1px);
+    }
+
+    .btn-submit:active:not(:disabled) { transform: translateY(0); }
+    .btn-submit:disabled { opacity: 0.6; cursor: not-allowed; }
+
+    .spinner {
+      display: none;
+      width: 17px; height: 17px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+
+    /* bottom note */
+    .bottom-note {
+      text-align: center;
+      margin-top: 1.5rem;
+      font-size: 0.82rem;
+      font-weight: 300;
+      color: var(--white-dim);
+    }
+
+    .bottom-note a {
+      color: var(--gold);
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .bottom-note a:hover { text-decoration: underline; }
+
+    /* ANIMATIONS */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 860px) {
+      body { flex-direction: column; }
+
+      .left-panel {
+        width: 100%;
+        padding: 2rem;
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .panel-sub   { display: none; }
+      .after-signup { display: none; }
+      .panel-bottom { display: none; }
+      .panel-headline { font-size: 2.4rem; }
+      .back-link { margin-bottom: 1.2rem; }
+
+      .right-panel { padding: 2rem 1.5rem; }
+      .form-row { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- LEFT PANEL -->
+  <div class="left-panel">
+    <div class="grid-bg"></div>
+    <div class="gold-line"></div>
+    <div class="blob-blue"></div>
+    <div class="blob-gold"></div>
+
+    <svg class="pitch-art" viewBox="0 0 460 540" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="20" y="20" width="420" height="500" stroke="white" stroke-width="2"/>
+      <line x1="20" y1="270" x2="440" y2="270" stroke="white" stroke-width="1.5"/>
+      <circle cx="230" cy="270" r="72" stroke="white" stroke-width="1.5"/>
+      <circle cx="230" cy="270" r="4" fill="white"/>
+      <rect x="110" y="20" width="240" height="115" stroke="white" stroke-width="1.5"/>
+      <rect x="158" y="20" width="144" height="52" stroke="white" stroke-width="1.5"/>
+      <rect x="110" y="405" width="240" height="115" stroke="white" stroke-width="1.5"/>
+      <rect x="158" y="468" width="144" height="52" stroke="white" stroke-width="1.5"/>
+      <circle cx="230" cy="88" r="4" fill="white"/>
+      <circle cx="230" cy="452" r="4" fill="white"/>
+    </svg>
+
+    <div class="panel-top">
+      <a href="index.html" class="back-link">
+        <svg viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M9 2L4 7L9 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        Back to home
+      </a>
+      <div class="brand">
+        <svg class="brand-icon" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="18" cy="18" r="17" stroke="#ffd700" stroke-width="1.5"/>
+          <circle cx="18" cy="18" r="8"  stroke="#0066ff" stroke-width="1.5"/>
+          <line x1="18" y1="1"  x2="18" y2="35" stroke="#ffd700" stroke-width="1" opacity="0.4"/>
+          <line x1="1"  y1="18" x2="35" y2="18" stroke="#ffd700" stroke-width="1" opacity="0.4"/>
+          <circle cx="18" cy="18" r="2.5" fill="#0066ff"/>
+        </svg>
+        <span class="brand-name">Kick<span>Off</span></span>
+      </div>
+    </div>
+
+    <div class="panel-middle">
+      <h2 class="panel-headline">
+        ONE ACCOUNT.<br>
+        <span class="gold">EVERY</span><br>
+        <span class="blue">LEAGUE.</span>
+      </h2>
+      <p class="panel-sub">
+        Sign up once. From your dashboard you can create leagues, invite players, or jump into any league you're invited to.
+      </p>
+
+      <div class="after-signup">
+        <div class="after-item">
+          <div class="after-icon gold-bg">
+            <svg viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M7 1L8.8 4.8H13L9.7 7.4L11 11.5L7 9L3 11.5L4.3 7.4L1 4.8H5.2Z" stroke="#ffd700" stroke-width="1.2" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <div class="after-text">
+            <div class="after-title">Create a League</div>
+            <div class="after-desc">Set it up, invite players, auto-generate fixtures. You run it.</div>
+          </div>
+        </div>
+
+        <div class="after-item">
+          <div class="after-icon blue-bg">
+            <svg viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="1" y="4" width="12" height="9" rx="1.2" stroke="#0066ff" stroke-width="1.2"/>
+              <path d="M4 4V3C4 1.9 5.1 1 7 1C8.9 1 10 1.9 10 3V4" stroke="#0066ff" stroke-width="1.2" stroke-linecap="round"/>
+              <line x1="7" y1="7" x2="7" y2="10" stroke="#0066ff" stroke-width="1.2" stroke-linecap="round"/>
+              <line x1="5.5" y1="8.5" x2="8.5" y2="8.5" stroke="#0066ff" stroke-width="1.2" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div class="after-text">
+            <div class="after-title">Join with a Code</div>
+            <div class="after-desc">Get an invite link from the league owner. Enter and compete.</div>
+          </div>
+        </div>
+
+        <div class="after-item">
+          <div class="after-icon blue-bg">
+            <svg viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M3 12 L3 7 L6 7 L6 12" stroke="#0066ff" stroke-width="1.2" stroke-linejoin="round"/>
+              <path d="M6.5 12 L6.5 4 L9.5 4 L9.5 12" stroke="#0066ff" stroke-width="1.2" stroke-linejoin="round"/>
+              <path d="M10 12 L10 1 L13 1 L13 12" stroke="#0066ff" stroke-width="1.2" stroke-linejoin="round"/>
+              <line x1="1" y1="12" x2="14" y2="12" stroke="#0066ff" stroke-width="1.2"/>
+            </svg>
+          </div>
+          <div class="after-text">
+            <div class="after-title">Track Everything</div>
+            <div class="after-desc">Live standings, fixtures, stats — all in your dashboard.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel-bottom">
+      <p class="signin-prompt">Already have an account? <a href="login.html">Sign in here →</a></p>
+    </div>
+  </div>
+
+  <!-- RIGHT PANEL -->
+  <div class="right-panel">
+    <div class="form-box">
+
+      <div class="form-heading">
+        <h1>Create Account</h1>
+        <p>Free to join. No role selection needed — just sign up and play.</p>
+      </div>
+
+      <div class="global-error" id="global-error"></div>
+
+      <!-- NAME ROW -->
+      <div class="form-row">
+        <div class="form-group">
+          <label for="first-name">First Name</label>
+          <div class="input-wrap">
+            <svg class="input-icon" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="7.5" cy="5" r="3.5" stroke="white" stroke-width="1.2"/>
+              <path d="M1.5 14C1.5 11.5 4 9.5 7.5 9.5C11 9.5 13.5 11.5 13.5 14" stroke="white" stroke-width="1.2" stroke-linecap="round"/>
+            </svg>
+            <input type="text" id="first-name" placeholder="John" autocomplete="given-name"/>
+          </div>
+          <div class="field-error" id="err-first-name">First name is required.</div>
+        </div>
+
+        <div class="form-group">
+          <label for="last-name">Last Name</label>
+          <div class="input-wrap">
+            <svg class="input-icon" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="7.5" cy="5" r="3.5" stroke="white" stroke-width="1.2"/>
+              <path d="M1.5 14C1.5 11.5 4 9.5 7.5 9.5C11 9.5 13.5 11.5 13.5 14" stroke="white" stroke-width="1.2" stroke-linecap="round"/>
+            </svg>
+            <input type="text" id="last-name" placeholder="Doe" autocomplete="family-name"/>
+          </div>
+          <div class="field-error" id="err-last-name">Last name is required.</div>
+        </div>
+      </div>
+
+      <!-- USERNAME -->
+      <div class="form-group">
+        <label for="username">Username</label>
+        <div class="input-wrap">
+          <svg class="input-icon" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="7.5" cy="7.5" r="6.5" stroke="white" stroke-width="1.2"/>
+            <path d="M5 8.5C5 7 6 5.5 7.5 5.5C9 5.5 10 7 10 8.5" stroke="white" stroke-width="1.2" stroke-linecap="round"/>
+            <line x1="4.5" y1="8.5" x2="10.5" y2="8.5" stroke="white" stroke-width="1.2" stroke-linecap="round"/>
+          </svg>
+          <input type="text" id="username" placeholder="e.g. striker99" autocomplete="username"/>
+        </div>
+        <div class="input-hint">This is your public display name in leagues.</div>
+        <div class="field-error" id="err-username">Username is required (letters, numbers, underscores only).</div>
+      </div>
+
+      <!-- EMAIL -->
+      <div class="form-group">
+        <label for="email">Email Address</label>
+        <div class="input-wrap">
+          <svg class="input-icon" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="1" y="3" width="13" height="9" rx="1.5" stroke="white" stroke-width="1.2"/>
+            <path d="M1 5L7.5 9L14 5" stroke="white" stroke-width="1.2"/>
+          </svg>
+          <input type="email" id="email" placeholder="you@example.com" autocomplete="email"/>
+        </div>
+        <div class="field-error" id="err-email">Please enter a valid email address.</div>
+      </div>
+
+      <div class="section-divider"></div>
+      <div class="section-label">Security</div>
+
+      <!-- PASSWORD -->
+      <div class="form-group">
+        <label for="password">Password</label>
+        <div class="input-wrap">
+          <svg class="input-icon" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="2.5" y="6.5" width="10" height="7.5" rx="1.5" stroke="white" stroke-width="1.2"/>
+            <path d="M5 6.5V4.5C5 3.1 6.1 2 7.5 2C8.9 2 10 3.1 10 4.5V6.5" stroke="white" stroke-width="1.2" stroke-linecap="round"/>
+            <circle cx="7.5" cy="10.5" r="1.2" fill="white"/>
+          </svg>
+          <input type="password" id="password" placeholder="Min. 8 characters" autocomplete="new-password" oninput="handlePasswordInput(this.value)"/>
+          <button class="pw-toggle" type="button" onclick="togglePw('password','eye-pw')" aria-label="Show password">
+            <svg id="eye-pw" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M1 8C1 8 3.5 3 8 3C12.5 3 15 8 15 8C15 8 12.5 13 8 13C3.5 13 1 8 1 8Z" stroke="currentColor" stroke-width="1.3"/>
+              <circle cx="8" cy="8" r="2" stroke="currentColor" stroke-width="1.3"/>
+            </svg>
+          </button>
+        </div>
+        <div class="pw-strength" id="pw-strength">
+          <div class="strength-track">
+            <div class="strength-seg" id="seg-1"></div>
+            <div class="strength-seg" id="seg-2"></div>
+            <div class="strength-seg" id="seg-3"></div>
+            <div class="strength-seg" id="seg-4"></div>
+          </div>
+          <span class="strength-text" id="strength-text">Weak</span>
+        </div>
+        <div class="field-error" id="err-password">Password must be at least 8 characters.</div>
+      </div>
+
+      <!-- CONFIRM PASSWORD -->
+      <div class="form-group">
+        <label for="confirm-password">Confirm Password</label>
+        <div class="input-wrap">
+          <svg class="input-icon" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="2.5" y="6.5" width="10" height="7.5" rx="1.5" stroke="white" stroke-width="1.2"/>
+            <path d="M5 6.5V4.5C5 3.1 6.1 2 7.5 2C8.9 2 10 3.1 10 4.5V6.5" stroke="white" stroke-width="1.2" stroke-linecap="round"/>
+            <path d="M5.5 10.5L7 12L10 9" stroke="white" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <input type="password" id="confirm-password" placeholder="Repeat your password" autocomplete="new-password"/>
+          <button class="pw-toggle" type="button" onclick="togglePw('confirm-password','eye-confirm')" aria-label="Show confirm password">
+            <svg id="eye-confirm" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M1 8C1 8 3.5 3 8 3C12.5 3 15 8 15 8C15 8 12.5 13 8 13C3.5 13 1 8 1 8Z" stroke="currentColor" stroke-width="1.3"/>
+              <circle cx="8" cy="8" r="2" stroke="currentColor" stroke-width="1.3"/>
+            </svg>
+          </button>
+        </div>
+        <div class="field-error" id="err-confirm">Passwords do not match.</div>
+      </div>
+
+      <!-- TERMS -->
+      <div class="terms-wrap">
+        <input type="checkbox" id="terms"/>
+        <label for="terms">
+          I agree to the <a href="terms.html">Terms of Service</a> and <a href="privacy.html">Privacy Policy</a>
+        </label>
+      </div>
+      <div class="field-error terms-error" id="err-terms">You must agree to continue.</div>
+
+      <!-- SUBMIT -->
+      <button class="btn-submit" id="btn-submit" onclick="handleRegister()">
+        <div class="spinner" id="spinner"></div>
+        <span id="btn-label">Create My Account</span>
+      </button>
+
+      <div class="bottom-note">
+        Already have an account? <a href="login.html">Log in here.</a>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="js/register.js"></script>
+</body>
+</html>

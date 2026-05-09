@@ -1,0 +1,945 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>KickOff — eFootball League Manager</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:ital,wght@0,300;0,400;0,600;1,300&display=swap" rel="stylesheet">
+  <link rel="icon" href="assets/favicon.ico" type="image/x-icon">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy: #0a1628;
+      --navy-mid: #0d1f3c;
+      --navy-light: #152845;
+      --blue: #0066ff;
+      --blue-glow: rgba(0,102,255,0.25);
+      --gold: #ffd700;
+      --gold-dim: rgba(255,215,0,0.15);
+      --white: #ffffff;
+      --white-dim: rgba(255,255,255,0.55);
+      --white-faint: rgba(255,255,255,0.07);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Barlow', sans-serif;
+      background: var(--navy);
+      color: var(--white);
+      overflow-x: hidden;
+    }
+
+    /* NAV */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.2rem 4rem;
+      background: rgba(10,22,40,0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      animation: fadeDown 0.6s ease both;
+    }
+
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+    }
+
+    .nav-logo-icon { width: 32px; height: 32px; }
+
+    .nav-logo-text {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.6rem;
+      letter-spacing: 3px;
+      color: var(--white);
+    }
+
+    .nav-logo-text span { color: var(--gold); }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 2.5rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      font-size: 0.82rem;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--white-dim);
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover { color: var(--white); }
+
+    .nav-cta { display: flex; gap: 0.75rem; }
+
+    .btn-ghost {
+      padding: 0.5rem 1.4rem;
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 4px;
+      font-family: 'Barlow', sans-serif;
+      font-size: 0.82rem;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--white);
+      text-decoration: none;
+      transition: border-color 0.2s, background 0.2s;
+      background: transparent;
+    }
+
+    .btn-ghost:hover {
+      border-color: var(--white);
+      background: rgba(255,255,255,0.06);
+    }
+
+    .btn-primary {
+      padding: 0.5rem 1.4rem;
+      background: var(--blue);
+      border: 1px solid var(--blue);
+      border-radius: 4px;
+      font-family: 'Barlow', sans-serif;
+      font-size: 0.82rem;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--white);
+      text-decoration: none;
+      transition: background 0.2s, box-shadow 0.2s;
+    }
+
+    .btn-primary:hover {
+      background: #0055dd;
+      box-shadow: 0 0 20px var(--blue-glow);
+    }
+
+    /* HERO */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 8rem 2rem 4rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .grid-lines {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+      background-size: 60px 60px;
+    }
+
+    .hero-glow {
+      position: absolute;
+      top: 20%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 700px;
+      height: 500px;
+      background: radial-gradient(ellipse, rgba(0,102,255,0.18) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .pitch-bg {
+      position: absolute;
+      bottom: -10%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 900px;
+      opacity: 0.04;
+    }
+
+    .hero-diagonal {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 160px;
+      background: linear-gradient(to bottom right, transparent 49.5%, var(--navy-mid) 50%);
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      max-width: 900px;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--gold-dim);
+      border: 1px solid rgba(255,215,0,0.3);
+      border-radius: 100px;
+      padding: 0.35rem 1rem;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 2rem;
+      animation: fadeUp 0.7s 0.2s ease both;
+    }
+
+    .badge-dot {
+      width: 6px; height: 6px;
+      background: var(--gold);
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+
+    .hero-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(4rem, 10vw, 8.5rem);
+      line-height: 0.9;
+      letter-spacing: 3px;
+      color: var(--white);
+      margin-bottom: 1.5rem;
+      animation: fadeUp 0.7s 0.35s ease both;
+    }
+
+    .hero-title .gold { color: var(--gold); }
+    .hero-title .blue { color: var(--blue); }
+
+    .hero-sub {
+      font-size: 1.1rem;
+      font-weight: 300;
+      color: var(--white-dim);
+      line-height: 1.8;
+      max-width: 540px;
+      margin: 0 auto 2.5rem;
+      animation: fadeUp 0.7s 0.5s ease both;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      animation: fadeUp 0.7s 0.65s ease both;
+    }
+
+    .btn-hero-primary {
+      padding: 0.9rem 2.4rem;
+      background: var(--blue);
+      border: none;
+      border-radius: 4px;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.15rem;
+      letter-spacing: 3px;
+      color: var(--white);
+      text-decoration: none;
+      transition: background 0.2s, box-shadow 0.2s, transform 0.1s;
+      display: inline-block;
+    }
+
+    .btn-hero-primary:hover {
+      background: #0055dd;
+      box-shadow: 0 0 35px rgba(0,102,255,0.4);
+      transform: translateY(-2px);
+    }
+
+    .btn-hero-ghost {
+      padding: 0.9rem 2.4rem;
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.25);
+      border-radius: 4px;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.15rem;
+      letter-spacing: 3px;
+      color: var(--white);
+      text-decoration: none;
+      transition: border-color 0.2s, background 0.2s, transform 0.1s;
+      display: inline-block;
+    }
+
+    .btn-hero-ghost:hover {
+      border-color: var(--white);
+      background: rgba(255,255,255,0.06);
+      transform: translateY(-2px);
+    }
+
+    .hero-scroll-hint {
+      position: absolute;
+      bottom: 2.5rem;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      animation: fadeUp 1s 1s ease both;
+    }
+
+    .scroll-label {
+      font-size: 0.68rem;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.3);
+    }
+
+    .scroll-line {
+      width: 1px;
+      height: 40px;
+      background: linear-gradient(to bottom, rgba(255,255,255,0.3), transparent);
+      animation: scrollDrop 1.5s ease-in-out infinite;
+    }
+
+    /* STATS BAR */
+    .stats-bar {
+      background: var(--navy-mid);
+      border-top: 1px solid rgba(255,255,255,0.06);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      padding: 2rem 4rem;
+      display: flex;
+      justify-content: center;
+      gap: 5rem;
+      flex-wrap: wrap;
+    }
+
+    .stat-item { text-align: center; }
+
+    .stat-value {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2.8rem;
+      letter-spacing: 2px;
+      color: var(--gold);
+      line-height: 1;
+    }
+
+    .stat-label {
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      color: var(--white-dim);
+      margin-top: 0.3rem;
+    }
+
+    /* FEATURES */
+    .section {
+      padding: 6rem 4rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .section-label {
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--blue);
+      margin-bottom: 0.75rem;
+    }
+
+    .section-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(2.5rem, 5vw, 4rem);
+      letter-spacing: 2px;
+      line-height: 1;
+      color: var(--white);
+      margin-bottom: 1rem;
+    }
+
+    .section-title span { color: var(--gold); }
+
+    .section-sub {
+      font-size: 1rem;
+      font-weight: 300;
+      color: var(--white-dim);
+      line-height: 1.8;
+      max-width: 500px;
+      margin-bottom: 3.5rem;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .feature-card {
+      background: var(--navy);
+      padding: 2.5rem 2rem;
+      transition: background 0.25s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .feature-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: var(--blue);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.3s;
+    }
+
+    .feature-card:hover { background: var(--navy-light); }
+    .feature-card:hover::before { transform: scaleX(1); }
+
+    .feature-icon {
+      width: 44px; height: 44px;
+      background: var(--blue-glow);
+      border: 1px solid rgba(0,102,255,0.3);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1.25rem;
+    }
+
+    .feature-icon svg { width: 20px; height: 20px; }
+
+    .feature-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.3rem;
+      letter-spacing: 1.5px;
+      color: var(--white);
+      margin-bottom: 0.6rem;
+    }
+
+    .feature-desc {
+      font-size: 0.88rem;
+      font-weight: 300;
+      color: var(--white-dim);
+      line-height: 1.7;
+    }
+
+    /* HOW IT WORKS */
+    .how-section {
+      background: var(--navy-mid);
+      padding: 6rem 4rem;
+    }
+
+    .how-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .steps-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 0;
+      margin-top: 3.5rem;
+      position: relative;
+    }
+
+    .steps-row::before {
+      content: '';
+      position: absolute;
+      top: 28px;
+      left: 10%;
+      right: 10%;
+      height: 1px;
+      background: linear-gradient(to right, transparent, rgba(0,102,255,0.4), transparent);
+    }
+
+    .step { text-align: center; padding: 0 1.5rem; }
+
+    .step-num {
+      width: 56px; height: 56px;
+      border: 1px solid rgba(0,102,255,0.4);
+      background: var(--navy);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1.5rem;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.4rem;
+      letter-spacing: 1px;
+      color: var(--blue);
+      position: relative;
+      z-index: 1;
+    }
+
+    .step-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.15rem;
+      letter-spacing: 1.5px;
+      color: var(--white);
+      margin-bottom: 0.5rem;
+    }
+
+    .step-desc {
+      font-size: 0.83rem;
+      font-weight: 300;
+      color: var(--white-dim);
+      line-height: 1.7;
+    }
+
+    /* ROLES */
+    .roles-section {
+      padding: 6rem 4rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .roles-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin-top: 3.5rem;
+    }
+
+    .role-card {
+      border: 1px solid rgba(255,255,255,0.08);
+      padding: 2.5rem;
+      transition: border-color 0.25s;
+    }
+
+    .role-card:hover { border-color: rgba(255,255,255,0.18); }
+    .role-card.owner { border-top: 3px solid var(--gold); }
+    .role-card.player { border-top: 3px solid var(--blue); }
+
+    .role-tag {
+      font-size: 0.68rem;
+      font-weight: 600;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      margin-bottom: 0.75rem;
+    }
+
+    .owner .role-tag { color: var(--gold); }
+    .player .role-tag { color: var(--blue); }
+
+    .role-name {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2rem;
+      letter-spacing: 2px;
+      color: var(--white);
+      margin-bottom: 1rem;
+    }
+
+    .role-perks {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+    }
+
+    .role-perks li {
+      font-size: 0.88rem;
+      font-weight: 300;
+      color: var(--white-dim);
+      padding-left: 1.2rem;
+      position: relative;
+      line-height: 1.6;
+    }
+
+    .owner .role-perks li::before {
+      content: '—';
+      position: absolute;
+      left: 0;
+      color: var(--gold);
+      opacity: 0.6;
+    }
+
+    .player .role-perks li::before {
+      content: '—';
+      position: absolute;
+      left: 0;
+      color: var(--blue);
+      opacity: 0.6;
+    }
+
+    /* CTA */
+    .cta-section {
+      background: var(--navy-mid);
+      padding: 6rem 4rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cta-glow {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 600px; height: 300px;
+      background: radial-gradient(ellipse, rgba(0,102,255,0.12) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .cta-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(3rem, 6vw, 5rem);
+      letter-spacing: 3px;
+      color: var(--white);
+      margin-bottom: 1rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .cta-title span { color: var(--gold); }
+
+    .cta-sub {
+      font-size: 1rem;
+      font-weight: 300;
+      color: var(--white-dim);
+      margin-bottom: 2.5rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .cta-actions {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* FOOTER */
+    footer {
+      background: var(--navy);
+      border-top: 1px solid rgba(255,255,255,0.06);
+      padding: 2rem 4rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .footer-logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.3rem;
+      letter-spacing: 3px;
+      color: var(--white-dim);
+    }
+
+    .footer-logo span { color: var(--gold); }
+
+    .footer-note {
+      font-size: 0.78rem;
+      color: rgba(255,255,255,0.2);
+      letter-spacing: 1px;
+    }
+
+    /* ANIMATIONS */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeDown {
+      from { opacity: 0; transform: translateY(-16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0.3; }
+    }
+
+    @keyframes scrollDrop {
+      0%   { opacity: 0; transform: scaleY(0); transform-origin: top; }
+      50%  { opacity: 1; transform: scaleY(1); }
+      100% { opacity: 0; transform: scaleY(1); transform-origin: bottom; }
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 900px) {
+      nav { padding: 1rem 2rem; }
+      .nav-links { display: none; }
+      .stats-bar { gap: 2rem; padding: 2rem; }
+      .section, .roles-section { padding: 4rem 2rem; }
+      .how-section { padding: 4rem 2rem; }
+      .roles-grid { grid-template-columns: 1fr; }
+      .steps-row::before { display: none; }
+      .cta-section { padding: 4rem 2rem; }
+      footer { flex-direction: column; gap: 0.5rem; text-align: center; padding: 2rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <a href="#" class="nav-logo">
+      <svg class="nav-logo-icon" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="16" cy="16" r="15" stroke="#ffd700" stroke-width="1.5"/>
+        <circle cx="16" cy="16" r="7" stroke="#0066ff" stroke-width="1.5"/>
+        <line x1="16" y1="1" x2="16" y2="31" stroke="#ffd700" stroke-width="1" opacity="0.4"/>
+        <line x1="1" y1="16" x2="31" y2="16" stroke="#ffd700" stroke-width="1" opacity="0.4"/>
+        <circle cx="16" cy="16" r="2.5" fill="#0066ff"/>
+      </svg>
+      <span class="nav-logo-text">Kick<span>Off</span></span>
+    </a>
+
+    <ul class="nav-links">
+      <li><a href="#features">Features</a></li>
+      <li><a href="#how">How It Works</a></li>
+      <li><a href="#roles">Roles</a></li>
+    </ul>
+
+    <div class="nav-cta">
+      <a href="login.html" class="btn-ghost">LogIn</a>
+      <a href="register.html" class="btn-primary">Get Started</a>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="grid-lines"></div>
+    <div class="hero-glow"></div>
+
+    <svg class="pitch-bg" viewBox="0 0 900 600" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="40" y="40" width="820" height="520" stroke="white" stroke-width="3"/>
+      <line x1="40" y1="300" x2="860" y2="300" stroke="white" stroke-width="2"/>
+      <circle cx="450" cy="300" r="90" stroke="white" stroke-width="2"/>
+      <circle cx="450" cy="300" r="5" fill="white"/>
+      <rect x="180" y="40" width="220" height="140" stroke="white" stroke-width="2"/>
+      <rect x="500" y="40" width="220" height="140" stroke="white" stroke-width="2"/>
+      <rect x="180" y="420" width="220" height="140" stroke="white" stroke-width="2"/>
+      <rect x="500" y="420" width="220" height="140" stroke="white" stroke-width="2"/>
+      <rect x="270" y="40" width="80" height="60" stroke="white" stroke-width="2"/>
+      <rect x="550" y="40" width="80" height="60" stroke="white" stroke-width="2"/>
+      <rect x="270" y="500" width="80" height="60" stroke="white" stroke-width="2"/>
+      <rect x="550" y="500" width="80" height="60" stroke="white" stroke-width="2"/>
+    </svg>
+
+    <div class="hero-diagonal"></div>
+
+    <div class="hero-content">
+      <div class="hero-badge">
+        <div class="badge-dot"></div>
+        eFootball League Management
+      </div>
+
+      <h1 class="hero-title">
+        MANAGE YOUR<br>
+        <span class="gold">LEAGUE.</span><br>
+        <span class="blue">OWN THE GAME.</span>
+      </h1>
+
+      <p class="hero-sub">
+        Create leagues, auto-generate fixtures, track live standings and run full knockout brackets, built for eFootball competitors.
+      </p>
+
+      <div class="hero-actions">
+        <a href="register.html" class="btn-hero-primary">Start Your League</a>
+        <a href="login.html" class="btn-hero-ghost">Log In</a>
+      </div>
+    </div>
+
+    <div class="hero-scroll-hint">
+      <span class="scroll-label">Scroll</span>
+      <div class="scroll-line"></div>
+    </div>
+  </section>
+
+  <!-- STATS BAR -->
+  <div class="stats-bar">
+    <div class="stat-item">
+      <div class="stat-value">32</div>
+      <div class="stat-label">Teams Per League</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-value">Live</div>
+      <div class="stat-label">Standings</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-value">Auto</div>
+      <div class="stat-label">Fixture Generation</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-value">Full</div>
+      <div class="stat-label">Knockout Brackets</div>
+    </div>
+  </div>
+
+  <!-- FEATURES -->
+  <section id="features">
+    <div class="section">
+      <div class="section-label">What You Get</div>
+      <h2 class="section-title">Everything Your<br><span>League Needs</span></h2>
+      <p class="section-sub">One system to run your entire eFootball competition from first kickoff to the final whistle.</p>
+
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">
+            <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="2" y="4" width="16" height="14" rx="1.5" stroke="#0066ff" stroke-width="1.5"/>
+              <line x1="2" y1="8" x2="18" y2="8" stroke="#0066ff" stroke-width="1.5"/>
+              <line x1="7" y1="2" x2="7" y2="6" stroke="#0066ff" stroke-width="1.5" stroke-linecap="round"/>
+              <line x1="13" y1="2" x2="13" y2="6" stroke="#0066ff" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div class="feature-title">Auto Fixture Generation</div>
+          <div class="feature-desc">Set your teams and the system builds a full match schedule automatically — single or double round-robin, any format.</div>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">
+            <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M3 16 L3 10 L7 10 L7 16" stroke="#0066ff" stroke-width="1.5" stroke-linejoin="round"/>
+              <path d="M8.5 16 L8.5 6 L12.5 6 L12.5 16" stroke="#0066ff" stroke-width="1.5" stroke-linejoin="round"/>
+              <path d="M14 16 L14 2 L18 2 L18 16" stroke="#0066ff" stroke-width="1.5" stroke-linejoin="round"/>
+              <line x1="1" y1="16" x2="19" y2="16" stroke="#0066ff" stroke-width="1.5"/>
+            </svg>
+          </div>
+          <div class="feature-title">Live Standings Table</div>
+          <div class="feature-desc">Points, wins, draws, losses, goals for and against — all updated the moment a result is submitted.</div>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">
+            <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M10 2 L12 7 L18 7 L13.5 11 L15.5 17 L10 13.5 L4.5 17 L6.5 11 L2 7 L8 7 Z" stroke="#0066ff" stroke-width="1.5" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <div class="feature-title">Knockout Brackets</div>
+          <div class="feature-desc">Top teams auto-qualify for playoffs. Quarters, semis and the final are generated and tracked automatically.</div>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">
+            <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="10" cy="7" r="4" stroke="#0066ff" stroke-width="1.5"/>
+              <path d="M3 18 C3 14.5 6 12 10 12 C14 12 17 14.5 17 18" stroke="#0066ff" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div class="feature-title">My Team Dashboard</div>
+          <div class="feature-desc">Every player sees their own fixtures, results, stats and qualification status — private to their account.</div>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">
+            <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M4 10 L8 14 L16 6" stroke="#0066ff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              <circle cx="10" cy="10" r="8" stroke="#0066ff" stroke-width="1.5"/>
+            </svg>
+          </div>
+          <div class="feature-title">Result Verification</div>
+          <div class="feature-desc">Players submit scores, the league owner approves. Clean, dispute-free result confirmation every time.</div>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">
+            <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="2" y="2" width="7" height="7" rx="1" stroke="#0066ff" stroke-width="1.5"/>
+              <rect x="11" y="2" width="7" height="7" rx="1" stroke="#0066ff" stroke-width="1.5"/>
+              <rect x="2" y="11" width="7" height="7" rx="1" stroke="#0066ff" stroke-width="1.5"/>
+              <rect x="11" y="11" width="7" height="7" rx="1" stroke="#0066ff" stroke-width="1.5"/>
+            </svg>
+          </div>
+          <div class="feature-title">Fair Owner Rules</div>
+          <div class="feature-desc">The league owner competes on the pitch like every other player. Admin power never touches gameplay fairness.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section id="how" class="how-section">
+    <div class="how-inner">
+      <div class="section-label">The Process</div>
+      <h2 class="section-title">Up And Running<br><span>In Minutes</span></h2>
+      <p class="section-sub">From zero to first kickoff in four steps.</p>
+
+      <div class="steps-row">
+        <div class="step">
+          <div class="step-num">01</div>
+          <div class="step-title">Create League</div>
+          <div class="step-desc">Sign up as owner, name your league and configure your rules.</div>
+        </div>
+        <div class="step">
+          <div class="step-num">02</div>
+          <div class="step-title">Add Teams</div>
+          <div class="step-desc">Register all competing teams including your own squad.</div>
+        </div>
+        <div class="step">
+          <div class="step-num">03</div>
+          <div class="step-title">Play Matches</div>
+          <div class="step-desc">Play on eFootball, submit results, table updates live instantly.</div>
+        </div>
+        <div class="step">
+          <div class="step-num">04</div>
+          <div class="step-title">Crown Champion</div>
+          <div class="step-desc">Knockout stage auto-generates. One team lifts the trophy.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ROLES -->
+  <section id="roles">
+    <div class="roles-section">
+      <div class="section-label">Two Roles</div>
+      <h2 class="section-title">Pick Your<br><span>Position</span></h2>
+      <p class="section-sub">One system, two ways to be part of it.</p>
+
+      <div class="roles-grid">
+        <div class="role-card owner">
+          <div class="role-tag">League Owner</div>
+          <div class="role-name">Run The Competition</div>
+          <ul class="role-perks">
+            <li>Create and name your league</li>
+            <li>Register all teams and manage the roster</li>
+            <li>Auto-generate the full fixture list</li>
+            <li>Approve or reject submitted results</li>
+            <li>Control playoff qualification rules</li>
+            <li>Compete as a player at the same time</li>
+          </ul>
+        </div>
+
+        <div class="role-card player">
+          <div class="role-tag">Player</div>
+          <div class="role-name">Compete And Rise</div>
+          <ul class="role-perks">
+            <li>Join an existing league</li>
+            <li>See all your fixtures in one place</li>
+            <li>Submit match results after games</li>
+            <li>Track your stats and current form</li>
+            <li>Follow your qualification status live</li>
+            <li>Chase the knockout rounds and glory</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta-section">
+    <div class="cta-glow"></div>
+    <h2 class="cta-title">Ready To <span>Kick Off?</span></h2>
+    <p class="cta-sub">Create your league in minutes. No setup fees. No limits.</p>
+    <div class="cta-actions">
+      <a href="register.html" class="btn-hero-primary">Create Your League</a>
+      <a href="login.html" class="btn-hero-ghost">Already Have An Account</a>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-logo">Kick<span>Off</span></div>
+    <div class="footer-note">Built for eFootball competitors &nbsp;·&nbsp; All rights reserved</div>
+  </footer>
+
+  <script src="js/home.js"></script>
+</body>
+</html>

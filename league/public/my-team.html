@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>My Team — KickOff</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="icon" href="assets/favicon.ico" type="image/x-icon">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy:         #0a1628;
+      --navy-mid:     #0d1f3c;
+      --navy-light:   #152845;
+      --navy-card:    #101d35;
+      --navy-hover:   #13234a;
+      --blue:         #0066ff;
+      --blue-dim:     rgba(0,102,255,0.14);
+      --blue-glow:    rgba(0,102,255,0.28);
+      --gold:         #ffd700;
+      --gold-dim:     rgba(255,215,0,0.11);
+      --gold-border:  rgba(255,215,0,0.25);
+      --white:        #ffffff;
+      --white-dim:    rgba(255,255,255,0.5);
+      --white-faint:  rgba(255,255,255,0.06);
+      --border:       rgba(255,255,255,0.08);
+      --border-light: rgba(255,255,255,0.14);
+      --error:        #ff4d4d;
+      --error-dim:    rgba(255,77,77,0.12);
+      --success:      #00cc66;
+      --success-dim:  rgba(0,204,102,0.12);
+      --warning:      #ff9500;
+      --warning-dim:  rgba(255,149,0,0.12);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Barlow', sans-serif;
+      background: var(--navy);
+      color: var(--white);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── NAV (repeated block) ── */
+    .nav {
+      position: sticky; top: 0; z-index: 200;
+      background: rgba(10,22,40,0.92);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+      height: 62px;
+      display: flex; align-items: center;
+      padding: 0 2rem; gap: 1rem;
+    }
+    .nav-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; flex-shrink: 0; }
+    .nav-brand-icon { width: 28px; height: 28px; }
+    .nav-brand-name { font-family: 'Bebas Neue', sans-serif; font-size: 1.45rem; letter-spacing: 3px; color: var(--white); }
+    .nav-brand-name span { color: var(--gold); }
+    .nav-links { display: flex; align-items: center; gap: 0.25rem; margin-left: 1.5rem; list-style: none; flex: 1; }
+    .nav-links a {
+      display: flex; align-items: center; gap: 6px;
+      padding: 0.4rem 0.85rem; border-radius: 5px;
+      text-decoration: none; font-size: 0.8rem; font-weight: 600;
+      letter-spacing: 1.5px; text-transform: uppercase; color: var(--white-dim);
+      transition: color 0.2s, background 0.2s;
+    }
+    .nav-links a:hover { color: var(--white); background: var(--white-faint); }
+    .nav-links a.active { color: var(--white); background: var(--white-faint); }
+    .nav-links a svg { width: 13px; height: 13px; }
+    .nav-right { display: flex; align-items: center; gap: 0.75rem; margin-left: auto; }
+    .nav-notif {
+      position: relative; width: 36px; height: 36px; border-radius: 8px;
+      border: 1px solid var(--border); background: transparent; cursor: pointer;
+      display: flex; align-items: center; justify-content: center; color: var(--white-dim);
+      transition: border-color 0.2s, color 0.2s, background 0.2s;
+    }
+    .nav-notif:hover { border-color: var(--border-light); color: var(--white); background: var(--white-faint); }
+    .nav-notif svg { width: 16px; height: 16px; }
+    .notif-badge {
+      position: absolute; top: -4px; right: -4px; width: 16px; height: 16px;
+      background: var(--error); border-radius: 50%; border: 2px solid var(--navy);
+      font-size: 0.6rem; font-weight: 700; color: #fff;
+      display: none; align-items: center; justify-content: center;
+    }
+    .notif-badge.visible { display: flex; }
+    .nav-avatar {
+      display: flex; align-items: center; gap: 9px;
+      padding: 0.3rem 0.6rem 0.3rem 0.3rem;
+      border: 1px solid var(--border); border-radius: 8px; cursor: pointer;
+      transition: border-color 0.2s, background 0.2s; position: relative;
+    }
+    .nav-avatar:hover { border-color: var(--border-light); background: var(--white-faint); }
+    .avatar-circle {
+      width: 28px; height: 28px; border-radius: 6px; background: var(--blue);
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Bebas Neue', sans-serif; font-size: 0.9rem; color: var(--white); flex-shrink: 0;
+    }
+    .avatar-name { font-size: 0.82rem; font-weight: 500; color: var(--white); max-width: 100px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .avatar-dropdown {
+      position: absolute; top: calc(100% + 8px); right: 0; width: 180px;
+      background: var(--navy-mid); border: 1px solid var(--border-light); border-radius: 8px;
+      overflow: hidden; display: none; z-index: 300; box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+    }
+    .avatar-dropdown.open { display: block; }
+    .dropdown-item {
+      display: flex; align-items: center; gap: 10px; padding: 0.7rem 1rem;
+      font-size: 0.83rem; color: var(--white-dim); cursor: pointer;
+      transition: background 0.15s, color 0.15s; text-decoration: none;
+      border: none; background: none; width: 100%; text-align: left;
+    }
+    .dropdown-item:hover { background: var(--white-faint); color: var(--white); }
+    .dropdown-item svg { width: 14px; height: 14px; }
+    .dropdown-divider { height: 1px; background: var(--border); margin: 0.25rem 0; }
+    .dropdown-item.danger { color: var(--error); }
+    .dropdown-item.danger:hover { background: rgba(255,77,77,0.08); }
+
+    /* ── PAGE ── */
+    .page { flex: 1; max-width: 1100px; width: 100%; margin: 0 auto; padding: 2.5rem 2rem 5rem; }
+
+    /* ── HERO BAND ── */
+    .hero-band {
+      background: var(--navy-mid);
+      border: 1px solid var(--border);
+      border-radius: 12px; padding: 2rem 2.5rem;
+      display: flex; align-items: center; gap: 2rem;
+      margin-bottom: 2rem; position: relative; overflow: hidden;
+      animation: fadeUp 0.4s ease both;
+    }
+
+    .hero-band::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+      background: linear-gradient(to right, var(--blue), var(--gold));
+    }
+
+    /* subtle grid bg */
+    .hero-band::after {
+      content: ''; position: absolute; inset: 0; pointer-events: none;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+      background-size: 40px 40px;
+    }
+
+    .hero-avatar {
+      width: 72px; height: 72px; border-radius: 14px;
+      background: var(--blue); border: 2px solid rgba(0,102,255,0.4);
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Bebas Neue', sans-serif; font-size: 2.2rem;
+      letter-spacing: 2px; color: var(--white); flex-shrink: 0;
+      position: relative; z-index: 1;
+      box-shadow: 0 0 24px var(--blue-glow);
+    }
+
+    .hero-info { flex: 1; position: relative; z-index: 1; }
+
+    .hero-tag { font-size: 0.68rem; font-weight: 600; letter-spacing: 3px; text-transform: uppercase; color: var(--blue); margin-bottom: 0.25rem; }
+
+    .hero-name {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(1.8rem, 4vw, 2.6rem);
+      letter-spacing: 2px; line-height: 1; color: var(--white);
+      margin-bottom: 0.3rem;
+    }
+
+    .hero-name span { color: var(--gold); }
+
+    .hero-meta { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
+
+    .hero-meta-item {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 0.78rem; font-weight: 300; color: var(--white-dim);
+    }
+
+    .hero-meta-item svg { width: 12px; height: 12px; opacity: 0.5; }
+
+    /* league selector within hero */
+    .hero-league-selector-wrap { position: relative; z-index: 1; flex-shrink: 0; }
+    .hero-league-selector {
+      appearance: none; cursor: pointer;
+      padding: 0.55rem 2rem 0.55rem 0.9rem;
+      background: var(--navy-card); border: 1px solid var(--border);
+      border-radius: 6px; font-family: 'Barlow', sans-serif;
+      font-size: 0.82rem; font-weight: 500; color: var(--white);
+      outline: none; transition: border-color 0.2s;
+    }
+    .hero-league-selector:focus { border-color: var(--blue); }
+    .selector-arrow { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); pointer-events: none; opacity: 0.4; }
+
+    /* ── STAT CARDS ── */
+    .stat-grid {
+      display: grid; grid-template-columns: repeat(5, 1fr);
+      gap: 1px; background: var(--border);
+      border: 1px solid var(--border); border-radius: 10px;
+      overflow: hidden; margin-bottom: 2rem;
+      animation: fadeUp 0.4s 0.06s ease both;
+    }
+
+    .stat-card {
+      background: var(--navy-card); padding: 1.1rem 1.2rem;
+      text-align: center; transition: background 0.2s; cursor: default;
+      position: relative;
+    }
+    .stat-card:hover { background: var(--navy-light); }
+
+    .stat-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      opacity: 0; transition: opacity 0.2s;
+    }
+    .stat-card:hover::before { opacity: 1; background: var(--blue); }
+
+    .stat-label { font-size: 0.62rem; font-weight: 700; letter-spacing: 2.5px; text-transform: uppercase; color: var(--white-dim); margin-bottom: 0.45rem; }
+    .stat-value { font-family: 'Bebas Neue', sans-serif; font-size: 2rem; letter-spacing: 1px; line-height: 1; color: var(--white); }
+    .stat-value.gold  { color: var(--gold); }
+    .stat-value.blue  { color: var(--blue); }
+    .stat-value.green { color: var(--success); }
+    .stat-value.red   { color: var(--error); }
+    .stat-sub { font-size: 0.68rem; font-weight: 300; color: var(--white-dim); margin-top: 0.2rem; }
+
+    /* ── MAIN GRID ── */
+    .main-grid {
+      display: grid; grid-template-columns: 1fr 320px;
+      gap: 1.5rem; align-items: start;
+    }
+
+    /* ── SECTION HEAD ── */
+    .section-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
+    .section-title { font-family: 'Bebas Neue', sans-serif; font-size: 1.3rem; letter-spacing: 2px; color: var(--white); }
+    .section-link { font-size: 0.76rem; color: var(--blue); text-decoration: none; font-weight: 500; }
+    .section-link:hover { text-decoration: underline; }
+
+    /* ── FIXTURES LIST ── */
+    .fixtures-col { animation: fadeUp 0.4s 0.1s ease both; }
+
+    .fixture-item {
+      background: var(--navy-card); border: 1px solid var(--border);
+      border-radius: 8px; padding: 1rem 1.2rem;
+      display: grid; grid-template-columns: 1fr 90px 1fr;
+      align-items: center; gap: 0.75rem;
+      margin-bottom: 0.6rem; transition: border-color 0.2s, background 0.2s;
+      position: relative; overflow: hidden;
+      animation: fadeUp 0.35s ease both;
+    }
+    .fixture-item:hover { border-color: var(--border-light); background: var(--navy-hover); }
+
+    /* result strip on left */
+    .fixture-item::before {
+      content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
+    }
+    .fixture-item.win::before  { background: var(--success); }
+    .fixture-item.loss::before { background: var(--error); }
+    .fixture-item.draw::before { background: var(--warning); }
+    .fixture-item.upcoming::before { background: var(--border-light); }
+    .fixture-item.pending::before  { background: var(--warning); }
+
+    .fix-team { display: flex; align-items: center; gap: 8px; }
+    .fix-team.away { flex-direction: row-reverse; justify-content: flex-start; }
+
+    .fix-badge {
+      width: 26px; height: 26px; border-radius: 6px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Bebas Neue', sans-serif; font-size: 0.78rem;
+      border: 1px solid var(--border); background: var(--white-faint); color: var(--white-dim);
+    }
+    .fix-badge.mine { background: var(--blue-dim); border-color: rgba(0,102,255,0.3); color: var(--blue); }
+    .fix-badge.opp  { background: var(--white-faint); border-color: var(--border); color: var(--white-dim); }
+
+    .fix-name { font-size: 0.83rem; font-weight: 500; color: var(--white); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .fix-name.my-name { color: var(--blue); }
+    .fix-name small { display: block; font-size: 0.68rem; font-weight: 300; color: var(--white-dim); }
+
+    .fix-center { text-align: center; }
+    .fix-score  { font-family: 'Bebas Neue', sans-serif; font-size: 1.4rem; letter-spacing: 3px; color: var(--white); }
+    .fix-score.win-score  { color: var(--success); }
+    .fix-score.loss-score { color: var(--error); }
+    .fix-vs   { font-family: 'Bebas Neue', sans-serif; font-size: 0.9rem; letter-spacing: 1px; color: var(--white-dim); }
+    .fix-date { font-size: 0.65rem; font-weight: 300; color: var(--white-dim); margin-top: 2px; }
+    .fix-status { font-size: 0.6rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; margin-top: 2px; }
+    .fix-status.upcoming { color: var(--white-dim); }
+    .fix-status.pending  { color: var(--warning); }
+    .fix-status.done     { color: var(--success); }
+
+    /* submit button inside fixture */
+    .btn-submit-small {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 0.3rem 0.7rem; margin-top: 5px;
+      background: var(--blue-dim); border: 1px solid rgba(0,102,255,0.3);
+      border-radius: 4px; font-family: 'Bebas Neue', sans-serif;
+      font-size: 0.72rem; letter-spacing: 1.5px; color: var(--blue);
+      cursor: pointer; transition: background 0.2s, border-color 0.2s;
+    }
+    .btn-submit-small:hover { background: var(--blue); color: var(--white); border-color: var(--blue); }
+
+    /* ── RIGHT COLUMN ── */
+    .right-col { display: flex; flex-direction: column; gap: 1.5rem; animation: fadeUp 0.4s 0.14s ease both; }
+
+    /* ── QUALIFICATION CARD ── */
+    .qual-card {
+      background: var(--navy-card); border: 1px solid var(--border);
+      border-radius: 10px; overflow: hidden;
+    }
+
+    .qual-head {
+      padding: 0.9rem 1.2rem; border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .qual-title { font-family: 'Bebas Neue', sans-serif; font-size: 1rem; letter-spacing: 2px; color: var(--white); }
+
+    .qual-leagues { padding: 0.5rem 0; }
+
+    .qual-league-row {
+      padding: 0.85rem 1.2rem; border-bottom: 1px solid var(--border);
+      transition: background 0.15s;
+    }
+    .qual-league-row:last-child { border-bottom: none; }
+    .qual-league-row:hover { background: var(--white-faint); }
+
+    .ql-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem; }
+
+    .ql-name { font-size: 0.85rem; font-weight: 500; color: var(--white); }
+
+    .qual-badge {
+      font-size: 0.62rem; font-weight: 700; letter-spacing: 1.5px;
+      text-transform: uppercase; padding: 0.2rem 0.55rem; border-radius: 3px;
+    }
+    .qual-badge.qualified    { background: var(--success-dim); border: 1px solid rgba(0,204,102,0.28); color: var(--success); }
+    .qual-badge.on-track     { background: var(--blue-dim);    border: 1px solid rgba(0,102,255,0.3);  color: var(--blue); }
+    .qual-badge.danger       { background: var(--error-dim);   border: 1px solid rgba(255,77,77,0.3);  color: var(--error); }
+    .qual-badge.champion     { background: var(--gold-dim);    border: 1px solid var(--gold-border);   color: var(--gold); }
+    .qual-badge.eliminated   { background: var(--white-faint); border: 1px solid var(--border);        color: var(--white-dim); }
+    .qual-badge.in-progress  { background: var(--warning-dim); border: 1px solid rgba(255,149,0,0.3);  color: var(--warning); }
+
+    .ql-progress-wrap { height: 3px; background: var(--border); border-radius: 2px; overflow: hidden; margin-bottom: 0.35rem; }
+    .ql-progress-fill { height: 100%; border-radius: 2px; transition: width 0.6s ease; }
+    .ql-progress-fill.safe    { background: var(--success); }
+    .ql-progress-fill.risk    { background: var(--warning); }
+    .ql-progress-fill.out     { background: var(--error); }
+    .ql-progress-fill.gold    { background: var(--gold); }
+
+    .ql-meta { font-size: 0.72rem; font-weight: 300; color: var(--white-dim); display: flex; justify-content: space-between; }
+
+    /* ── FORM CARD ── */
+    .form-card {
+      background: var(--navy-card); border: 1px solid var(--border);
+      border-radius: 10px; padding: 1.2rem;
+    }
+
+    .form-card-title { font-family: 'Bebas Neue', sans-serif; font-size: 1rem; letter-spacing: 2px; color: var(--white); margin-bottom: 1rem; }
+
+    .form-dots { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+
+    .form-dot-lg {
+      width: 36px; height: 36px; border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Bebas Neue', sans-serif; font-size: 0.9rem;
+      letter-spacing: 1px; color: #fff; flex-shrink: 0;
+      transition: transform 0.2s;
+    }
+    .form-dot-lg:hover { transform: scale(1.1); }
+    .form-dot-lg.W { background: var(--success); }
+    .form-dot-lg.D { background: var(--warning); }
+    .form-dot-lg.L { background: var(--error); }
+    .form-dot-lg.empty { background: var(--border); color: transparent; }
+
+    .form-summary { display: flex; gap: 1rem; margin-top: 0.85rem; flex-wrap: wrap; }
+    .form-sum-item { text-align: center; }
+    .form-sum-val { font-family: 'Bebas Neue', sans-serif; font-size: 1.4rem; letter-spacing: 1px; line-height: 1; }
+    .form-sum-val.w { color: var(--success); }
+    .form-sum-val.d { color: var(--warning); }
+    .form-sum-val.l { color: var(--error); }
+    .form-sum-lbl { font-size: 0.62rem; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: var(--white-dim); margin-top: 2px; }
+
+    /* ── SKELETON ── */
+    .skeleton {
+      background: linear-gradient(90deg, var(--navy-card) 25%, var(--navy-light) 50%, var(--navy-card) 75%);
+      background-size: 400% 100%; border-radius: 8px;
+      animation: shimmer 1.4s ease infinite;
+    }
+
+    /* ── EMPTY FIXTURES ── */
+    .no-fixtures { text-align: center; padding: 2.5rem 1rem; font-size: 0.85rem; font-weight: 300; color: var(--white-dim); }
+
+    /* ── SUBMIT MODAL ── */
+    .modal-overlay {
+      position: fixed; inset: 0;
+      background: rgba(5,12,24,0.85); backdrop-filter: blur(6px);
+      z-index: 500; display: flex; align-items: center; justify-content: center;
+      padding: 1.5rem; opacity: 0; pointer-events: none; transition: opacity 0.2s;
+    }
+    .modal-overlay.open { opacity: 1; pointer-events: all; }
+    .modal {
+      background: var(--navy-mid); border: 1px solid var(--border-light);
+      border-radius: 12px; width: 100%; max-width: 420px; overflow: hidden;
+      transform: translateY(16px) scale(0.98); transition: transform 0.25s ease;
+      position: relative;
+    }
+    .modal-overlay.open .modal { transform: translateY(0) scale(1); }
+    .modal-accent { position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--blue); }
+    .modal-header {
+      padding: 1.4rem 1.5rem 1.1rem; border-bottom: 1px solid var(--border);
+      display: flex; align-items: flex-start; justify-content: space-between;
+    }
+    .modal-title { font-family: 'Bebas Neue', sans-serif; font-size: 1.5rem; letter-spacing: 2px; color: var(--white); }
+    .modal-sub   { font-size: 0.8rem; font-weight: 300; color: var(--white-dim); margin-top: 0.25rem; }
+    .modal-close {
+      width: 30px; height: 30px; border-radius: 6px;
+      background: var(--white-faint); border: 1px solid var(--border);
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      color: var(--white-dim); transition: background 0.2s, color 0.2s; flex-shrink: 0;
+    }
+    .modal-close:hover { background: var(--border); color: var(--white); }
+    .modal-close svg { width: 14px; height: 14px; }
+    .modal-body { padding: 1.5rem; }
+    .score-inputs { display: grid; grid-template-columns: 1fr 36px 1fr; align-items: center; gap: 0.75rem; margin-bottom: 1.2rem; }
+    .score-team-name { font-size: 0.78rem; font-weight: 500; color: var(--white); margin-bottom: 0.4rem; text-align: center; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .score-input {
+      width: 100%; padding: 0.85rem 0.5rem;
+      background: var(--navy-card); border: 1px solid var(--border); border-radius: 8px;
+      font-family: 'Bebas Neue', sans-serif; font-size: 2rem; letter-spacing: 2px;
+      color: var(--white); text-align: center; outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .score-input:focus { border-color: var(--blue); box-shadow: 0 0 0 3px var(--blue-dim); }
+    .score-input.has-error { border-color: var(--error); }
+    .score-vs { font-family: 'Bebas Neue', sans-serif; font-size: 1.1rem; color: var(--white-dim); text-align: center; }
+    .modal-note {
+      background: var(--blue-dim); border: 1px solid rgba(0,102,255,0.2);
+      border-left: 3px solid var(--blue); border-radius: 6px;
+      padding: 0.65rem 0.9rem; font-size: 0.78rem; font-weight: 300;
+      color: rgba(255,255,255,0.65); line-height: 1.6; margin-bottom: 1rem;
+    }
+    .modal-note strong { color: var(--white); font-weight: 500; }
+    .modal-error {
+      display: none; background: var(--error-dim);
+      border: 1px solid rgba(255,77,77,0.25); border-left: 3px solid var(--error);
+      border-radius: 6px; padding: 0.6rem 0.85rem;
+      font-size: 0.78rem; color: var(--error); margin-bottom: 1rem;
+    }
+    .modal-footer { padding: 0 1.5rem 1.5rem; display: flex; gap: 0.75rem; }
+    .btn-cancel {
+      flex-shrink: 0; padding: 0.75rem 1.2rem;
+      background: transparent; border: 1px solid var(--border); border-radius: 6px;
+      font-family: 'Bebas Neue', sans-serif; font-size: 1rem; letter-spacing: 2px;
+      color: var(--white-dim); cursor: pointer; transition: border-color 0.2s, color 0.2s;
+    }
+    .btn-cancel:hover { border-color: var(--border-light); color: var(--white); }
+    .btn-modal-submit {
+      flex: 1; padding: 0.75rem;
+      background: var(--blue); border: none; border-radius: 6px;
+      font-family: 'Bebas Neue', sans-serif; font-size: 1rem; letter-spacing: 2px;
+      color: var(--white); cursor: pointer;
+      transition: background 0.2s, box-shadow 0.2s;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+    }
+    .btn-modal-submit:hover:not(:disabled) { background: #0055dd; box-shadow: 0 0 20px var(--blue-glow); }
+    .btn-modal-submit:disabled { opacity: 0.6; cursor: not-allowed; }
+    .spinner {
+      display: none; width: 14px; height: 14px;
+      border: 2px solid rgba(255,255,255,0.3); border-top-color: transparent;
+      border-radius: 50%; animation: spin 0.7s linear infinite;
+    }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp  { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes shimmer { 0% { background-position: 100% 0; } 100% { background-position: -100% 0; } }
+    @keyframes spin    { to { transform: rotate(360deg); } }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      .nav-links { display: none; }
+      .main-grid { grid-template-columns: 1fr; }
+      .stat-grid { grid-template-columns: repeat(3, 1fr); }
+      .hero-band { flex-direction: column; align-items: flex-start; gap: 1rem; }
+      .page { padding: 1.5rem 1rem 4rem; }
+    }
+
+    @media (max-width: 500px) {
+      .stat-grid { grid-template-columns: 1fr 1fr; }
+      .fixture-item { grid-template-columns: 1fr 70px 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV (repeated block) -->
+  <nav class="nav">
+    <a href="dashboard.html" class="nav-brand">
+      <svg class="nav-brand-icon" viewBox="0 0 28 28" fill="none">
+        <circle cx="14" cy="14" r="13" stroke="#ffd700" stroke-width="1.3"/>
+        <circle cx="14" cy="14" r="6"  stroke="#0066ff" stroke-width="1.3"/>
+        <line x1="14" y1="1"  x2="14" y2="27" stroke="#ffd700" stroke-width="1" opacity="0.4"/>
+        <line x1="1"  y1="14" x2="27" y2="14" stroke="#ffd700" stroke-width="1" opacity="0.4"/>
+        <circle cx="14" cy="14" r="2" fill="#0066ff"/>
+      </svg>
+      <span class="nav-brand-name">Kick<span>Off</span></span>
+    </a>
+
+    <ul class="nav-links">
+      <li><a href="dashboard.html">
+        <svg viewBox="0 0 13 13" fill="none"><rect x="1" y="1" width="4.5" height="4.5" rx="1" stroke="currentColor" stroke-width="1.2"/><rect x="7.5" y="1" width="4.5" height="4.5" rx="1" stroke="currentColor" stroke-width="1.2"/><rect x="1" y="7.5" width="4.5" height="4.5" rx="1" stroke="currentColor" stroke-width="1.2"/><rect x="7.5" y="7.5" width="4.5" height="4.5" rx="1" stroke="currentColor" stroke-width="1.2"/></svg>
+        Dashboard
+      </a></li>
+      <li><a href="fixtures.html">
+        <svg viewBox="0 0 13 13" fill="none"><rect x="1" y="2" width="11" height="10" rx="1" stroke="currentColor" stroke-width="1.2"/><line x1="1" y1="5" x2="12" y2="5" stroke="currentColor" stroke-width="1.2"/><line x1="4.5" y1="1" x2="4.5" y2="3.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><line x1="8.5" y1="1" x2="8.5" y2="3.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+        Fixtures
+      </a></li>
+      <li><a href="table.html">
+        <svg viewBox="0 0 13 13" fill="none"><path d="M2 11 L2 7 L5 7 L5 11" stroke="currentColor" stroke-width="1.2"/><path d="M5.5 11 L5.5 4 L8.5 4 L8.5 11" stroke="currentColor" stroke-width="1.2"/><path d="M9 11 L9 1 L12 1 L12 11" stroke="currentColor" stroke-width="1.2"/><line x1="1" y1="11" x2="13" y2="11" stroke="currentColor" stroke-width="1.2"/></svg>
+        Table
+      </a></li>
+      <li><a href="knockout.html">
+        <svg viewBox="0 0 13 13" fill="none"><path d="M6.5 1L8 4.5H12L9 6.5L10 10L6.5 8L3 10L4 6.5L1 4.5H5Z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg>
+        Knockout
+      </a></li>
+      <li><a href="my-team.html" class="active">
+        <svg viewBox="0 0 13 13" fill="none"><circle cx="6.5" cy="4.5" r="2.5" stroke="currentColor" stroke-width="1.2"/><path d="M1.5 12C1.5 9.5 3.7 7.5 6.5 7.5C9.3 7.5 11.5 9.5 11.5 12" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+        My Team
+      </a></li>
+    </ul>
+
+    <div class="nav-right">
+      <div style="position:relative;">
+        <button class="nav-notif" onclick="toggleNotifPanel()">
+          <svg viewBox="0 0 16 16" fill="none"><path d="M8 2C8 2 4 3.5 4 8V11H12V8C12 3.5 8 2 8 2Z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><path d="M6 11V12C6 13.1 6.9 14 8 14C9.1 14 10 13.1 10 12V11" stroke="currentColor" stroke-width="1.3"/></svg>
+          <span class="notif-badge" id="notif-badge"></span>
+        </button>
+      </div>
+      <div class="nav-avatar" id="avatar-btn" onclick="toggleAvatarDropdown()">
+        <div class="avatar-circle" id="avatar-circle">S</div>
+        <span class="avatar-name" id="avatar-name">Player</span>
+        <svg width="10" height="10" viewBox="0 0 10 10" fill="none" style="opacity:0.4"><path d="M2 4L5 7L8 4" stroke="white" stroke-width="1.3" stroke-linecap="round"/></svg>
+        <div class="avatar-dropdown" id="avatar-dropdown">
+          <a href="my-team.html" class="dropdown-item">
+            <svg viewBox="0 0 14 14" fill="none"><circle cx="7" cy="5" r="3" stroke="currentColor" stroke-width="1.2"/><path d="M1.5 13C1.5 10.5 4 8.5 7 8.5C10 8.5 12.5 10.5 12.5 13" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+            My Profile
+          </a>
+          <div class="dropdown-divider"></div>
+          <button class="dropdown-item danger" onclick="handleSignOut()">
+            <svg viewBox="0 0 14 14" fill="none"><path d="M5 2H2C1.4 2 1 2.4 1 3V11C1 11.6 1.4 12 2 12H5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><path d="M9 4.5L12 7L9 9.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><line x1="12" y1="7" x2="5" y2="7" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+            Sign Out
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- PAGE -->
+  <div class="page">
+
+    <!-- HERO BAND -->
+    <div class="hero-band" id="hero-band">
+      <div class="hero-avatar" id="hero-avatar">S</div>
+      <div class="hero-info">
+        <div class="hero-tag">My Team</div>
+        <div class="hero-name" id="hero-name">Loading...</div>
+        <div class="hero-meta" id="hero-meta">
+          <div class="hero-meta-item">
+            <svg viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="5" stroke="currentColor" stroke-width="1.2"/></svg>
+            <span id="meta-league">—</span>
+          </div>
+          <div class="hero-meta-item">
+            <svg viewBox="0 0 12 12" fill="none"><path d="M6 1L7.5 4.5H11L8.3 6.7L9.4 10.3L6 8.2L2.6 10.3L3.7 6.7L1 4.5H4.5Z" stroke="currentColor" stroke-width="1.1" stroke-linejoin="round"/></svg>
+            <span id="meta-position">Position —</span>
+          </div>
+          <div class="hero-meta-item">
+            <svg viewBox="0 0 12 12" fill="none"><rect x="1" y="2" width="10" height="9" rx="1" stroke="currentColor" stroke-width="1.2"/><line x1="1" y1="5" x2="11" y2="5" stroke="currentColor" stroke-width="1.2"/></svg>
+            <span id="meta-stage">—</span>
+          </div>
+        </div>
+      </div>
+      <div class="hero-league-selector-wrap">
+        <select class="hero-league-selector" id="league-selector" onchange="handleLeagueChange()">
+          <option value="">Loading...</option>
+        </select>
+        <svg class="selector-arrow" viewBox="0 0 10 10" fill="none" width="10" height="10"><path d="M2 4L5 7L8 4" stroke="white" stroke-width="1.3" stroke-linecap="round"/></svg>
+      </div>
+    </div>
+
+    <!-- STAT GRID -->
+    <div class="stat-grid">
+      <div class="stat-card">
+        <div class="stat-label">Played</div>
+        <div class="stat-value" id="st-played">—</div>
+        <div class="stat-sub">matches</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Won</div>
+        <div class="stat-value green" id="st-won">—</div>
+        <div class="stat-sub">victories</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Drawn</div>
+        <div class="stat-value" style="color:var(--warning)" id="st-drawn">—</div>
+        <div class="stat-sub">draws</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Lost</div>
+        <div class="stat-value red" id="st-lost">—</div>
+        <div class="stat-sub">defeats</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Points</div>
+        <div class="stat-value gold" id="st-points">—</div>
+        <div class="stat-sub" id="st-gd">GD —</div>
+      </div>
+    </div>
+
+    <!-- MAIN GRID -->
+    <div class="main-grid">
+
+      <!-- FIXTURES -->
+      <div class="fixtures-col">
+        <div class="section-head">
+          <span class="section-title">My Fixtures</span>
+          <a href="fixtures.html" class="section-link">View all →</a>
+        </div>
+        <div id="fixtures-list">
+          <div class="skeleton" style="height:72px;margin-bottom:0.6rem;"></div>
+          <div class="skeleton" style="height:72px;margin-bottom:0.6rem;opacity:.7"></div>
+          <div class="skeleton" style="height:72px;margin-bottom:0.6rem;opacity:.45"></div>
+        </div>
+      </div>
+
+      <!-- RIGHT COLUMN -->
+      <div class="right-col">
+
+        <!-- QUALIFICATION STATUS -->
+        <div class="qual-card">
+          <div class="qual-head">
+            <span class="qual-title">Qualification</span>
+          </div>
+          <div class="qual-leagues" id="qual-list">
+            <div class="skeleton" style="height:80px;margin:0.5rem 1rem;border-radius:6px;"></div>
+          </div>
+        </div>
+
+        <!-- FORM -->
+        <div class="form-card">
+          <div class="form-card-title">Recent Form</div>
+          <div class="form-dots" id="form-dots">
+            <div class="form-dot-lg empty"></div>
+            <div class="form-dot-lg empty"></div>
+            <div class="form-dot-lg empty"></div>
+            <div class="form-dot-lg empty"></div>
+            <div class="form-dot-lg empty"></div>
+          </div>
+          <div class="form-summary" id="form-summary"></div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- SUBMIT RESULT MODAL -->
+  <div class="modal-overlay" id="result-modal" onclick="handleModalOverlayClick(event)">
+    <div class="modal">
+      <div class="modal-accent"></div>
+      <div class="modal-header">
+        <div>
+          <div class="modal-title">Submit Result</div>
+          <div class="modal-sub" id="modal-match-label">Match</div>
+        </div>
+        <button class="modal-close" onclick="closeModal()">
+          <svg viewBox="0 0 14 14" fill="none"><line x1="2" y1="2" x2="12" y2="12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="12" y1="2" x2="2" y2="12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="score-inputs">
+          <div>
+            <div class="score-team-name" id="modal-home">Home</div>
+            <input class="score-input" type="number" id="home-score" min="0" max="99" placeholder="0"/>
+          </div>
+          <div class="score-vs">VS</div>
+          <div>
+            <div class="score-team-name" id="modal-away">Away</div>
+            <input class="score-input" type="number" id="away-score" min="0" max="99" placeholder="0"/>
+          </div>
+        </div>
+        <div class="modal-note"><strong>Note:</strong> Result goes to the league owner for approval before the table updates.</div>
+        <div class="modal-error" id="modal-error"></div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+        <button class="btn-modal-submit" id="modal-submit" onclick="handleSubmitResult()">
+          <div class="spinner" id="modal-spinner"></div>
+          <span id="modal-label">Submit Result</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/my-team.js"></script>
+</body>
+</html>

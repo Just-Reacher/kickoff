@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sign In — KickOff</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="icon" href="assets/favicon.ico" type="image/x-icon">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy:       #0a1628;
+      --navy-mid:   #0d1f3c;
+      --navy-light: #152845;
+      --navy-card:  #101d35;
+      --blue:       #0066ff;
+      --blue-dim:   rgba(0,102,255,0.15);
+      --blue-glow:  rgba(0,102,255,0.25);
+      --gold:       #ffd700;
+      --gold-dim:   rgba(255,215,0,0.12);
+      --white:      #ffffff;
+      --white-dim:  rgba(255,255,255,0.5);
+      --white-faint:rgba(255,255,255,0.06);
+      --border:     rgba(255,255,255,0.08);
+      --border-hover: rgba(255,255,255,0.16);
+      --error:      #ff4d4d;
+      --error-dim:  rgba(255,77,77,0.12);
+      --success:    #00cc66;
+    }
+
+    html, body {
+      height: 100%;
+    }
+
+    body {
+      font-family: 'Barlow', sans-serif;
+      background: var(--navy);
+      color: var(--white);
+      min-height: 100vh;
+      display: flex;
+      align-items: stretch;
+      overflow-x: hidden;
+    }
+
+    /* ── LEFT PANEL ── */
+    .left-panel {
+      width: 48%;
+      background: var(--navy-mid);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 3rem 3.5rem;
+      overflow: hidden;
+      border-right: 1px solid var(--border);
+    }
+
+    /* animated grid */
+    .grid-bg {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+      background-size: 50px 50px;
+    }
+
+    /* pitch lines */
+    .pitch-art {
+      position: absolute;
+      bottom: -5%;
+      right: -10%;
+      width: 520px;
+      opacity: 0.05;
+    }
+
+    /* blue accent blob */
+    .blob {
+      position: absolute;
+      top: -80px;
+      right: -80px;
+      width: 380px;
+      height: 380px;
+      background: radial-gradient(circle, rgba(0,102,255,0.18) 0%, transparent 65%);
+      pointer-events: none;
+    }
+
+    /* gold accent line top */
+    .gold-line {
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(to right, var(--gold), transparent 60%);
+    }
+
+    .panel-top {
+      position: relative;
+      z-index: 2;
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--white-dim);
+      transition: color 0.2s;
+      margin-bottom: 3rem;
+    }
+
+    .back-link:hover { color: var(--white); }
+
+    .back-link svg { width: 14px; height: 14px; }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 0.4rem;
+    }
+
+    .brand-icon { width: 36px; height: 36px; }
+
+    .brand-name {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2rem;
+      letter-spacing: 3px;
+      color: var(--white);
+    }
+
+    .brand-name span { color: var(--gold); }
+
+    .panel-middle {
+      position: relative;
+      z-index: 2;
+    }
+
+    .panel-headline {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(3rem, 5vw, 4.5rem);
+      line-height: 0.92;
+      letter-spacing: 2px;
+      color: var(--white);
+      margin-bottom: 1.2rem;
+    }
+
+    .panel-headline .gold { color: var(--gold); }
+    .panel-headline .blue { color: var(--blue); }
+
+    .panel-sub {
+      font-size: 0.92rem;
+      font-weight: 300;
+      color: var(--white-dim);
+      line-height: 1.8;
+      max-width: 340px;
+    }
+
+    .panel-bottom {
+      position: relative;
+      z-index: 2;
+    }
+
+    .trust-row {
+      display: flex;
+      gap: 2rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .trust-value {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.8rem;
+      letter-spacing: 1px;
+      color: var(--gold);
+      line-height: 1;
+    }
+
+    .trust-label {
+      font-size: 0.68rem;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--white-dim);
+      margin-top: 3px;
+    }
+
+    /* ── RIGHT PANEL ── */
+    .right-panel {
+      width: 52%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 3rem 4rem;
+      position: relative;
+    }
+
+    .right-panel::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(0,102,255,0.06) 0%, transparent 65%);
+      pointer-events: none;
+    }
+
+    .form-box {
+      width: 100%;
+      max-width: 400px;
+      position: relative;
+      z-index: 1;
+      animation: fadeUp 0.6s 0.1s ease both;
+    }
+
+    /* heading */
+    .form-heading {
+      margin-bottom: 2.5rem;
+    }
+
+    .form-heading h1 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2.8rem;
+      letter-spacing: 2px;
+      line-height: 1;
+      color: var(--white);
+      margin-bottom: 0.5rem;
+    }
+
+    .form-heading p {
+      font-size: 0.88rem;
+      font-weight: 300;
+      color: var(--white-dim);
+    }
+
+    .form-heading p a {
+      color: var(--blue);
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .form-heading p a:hover { text-decoration: underline; }
+
+    /* global error */
+    .global-error {
+      display: none;
+      background: var(--error-dim);
+      border: 1px solid rgba(255,77,77,0.3);
+      border-left: 3px solid var(--error);
+      border-radius: 6px;
+      padding: 0.75rem 1rem;
+      font-size: 0.84rem;
+      color: var(--error);
+      margin-bottom: 1.5rem;
+      line-height: 1.5;
+    }
+
+    /* form groups */
+    .form-group {
+      margin-bottom: 1.3rem;
+      position: relative;
+    }
+
+    label {
+      display: block;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--white-dim);
+      margin-bottom: 0.5rem;
+    }
+
+    .input-wrap {
+      position: relative;
+    }
+
+    .input-icon {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 16px;
+      height: 16px;
+      opacity: 0.35;
+      pointer-events: none;
+    }
+
+    input[type="email"],
+    input[type="password"],
+    input[type="text"] {
+      width: 100%;
+      padding: 0.78rem 1rem 0.78rem 2.6rem;
+      background: var(--navy-card);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-family: 'Barlow', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 400;
+      color: var(--white);
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+    }
+
+    input::placeholder { color: rgba(255,255,255,0.2); }
+
+    input:hover {
+      border-color: var(--border-hover);
+    }
+
+    input:focus {
+      border-color: var(--blue);
+      background: var(--navy-light);
+      box-shadow: 0 0 0 3px rgba(0,102,255,0.15);
+    }
+
+    input.has-error {
+      border-color: var(--error);
+      box-shadow: 0 0 0 3px rgba(255,77,77,0.12);
+    }
+
+    .field-error {
+      display: none;
+      font-size: 0.75rem;
+      color: var(--error);
+      margin-top: 0.4rem;
+      padding-left: 2px;
+    }
+
+    /* password toggle */
+    .pw-toggle {
+      position: absolute;
+      right: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      color: var(--white-dim);
+      display: flex;
+      align-items: center;
+      transition: color 0.2s;
+    }
+
+    .pw-toggle:hover { color: var(--white); }
+    .pw-toggle svg { width: 16px; height: 16px; }
+
+    /* forgot */
+    .row-between {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.5rem;
+    }
+
+    .remember-wrap {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .remember-wrap input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      padding: 0;
+      accent-color: var(--blue);
+      cursor: pointer;
+    }
+
+    .remember-wrap label {
+      font-size: 0.8rem;
+      letter-spacing: 0;
+      text-transform: none;
+      color: var(--white-dim);
+      margin: 0;
+      cursor: pointer;
+    }
+
+    .forgot-link {
+      font-size: 0.8rem;
+      color: var(--blue);
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .forgot-link:hover { text-decoration: underline; }
+
+    /* submit button */
+    .btn-submit {
+      width: 100%;
+      padding: 0.9rem;
+      background: var(--blue);
+      border: none;
+      border-radius: 6px;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.2rem;
+      letter-spacing: 3px;
+      color: var(--white);
+      cursor: pointer;
+      transition: background 0.2s, box-shadow 0.2s, transform 0.1s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .btn-submit:hover:not(:disabled) {
+      background: #0055dd;
+      box-shadow: 0 0 28px rgba(0,102,255,0.35);
+      transform: translateY(-1px);
+    }
+
+    .btn-submit:active:not(:disabled) { transform: translateY(0); }
+
+    .btn-submit:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .spinner {
+      display: none;
+      width: 18px;
+      height: 18px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+
+    /* divider */
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin: 1.75rem 0;
+    }
+
+    .divider::before,
+    .divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    .divider span {
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.2);
+    }
+
+    /* register CTA */
+    .register-cta {
+      text-align: center;
+      font-size: 0.85rem;
+      font-weight: 300;
+      color: var(--white-dim);
+    }
+
+    .register-cta a {
+      color: var(--gold);
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .register-cta a:hover { text-decoration: underline; }
+
+    /* owner badge callout */
+    .owner-callout {
+      margin-top: 2rem;
+      padding: 1rem 1.2rem;
+      background: var(--gold-dim);
+      border: 1px solid rgba(255,215,0,0.2);
+      border-left: 3px solid var(--gold);
+      border-radius: 6px;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+    }
+
+    .owner-callout svg { width: 16px; height: 16px; flex-shrink: 0; margin-top: 2px; }
+
+    .callout-text {
+      font-size: 0.8rem;
+      font-weight: 300;
+      color: rgba(255,215,0,0.75);
+      line-height: 1.6;
+    }
+
+    .callout-text strong {
+      color: var(--gold);
+      font-weight: 600;
+    }
+
+    /* ANIMATIONS */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 860px) {
+      body { flex-direction: column; }
+
+      .left-panel {
+        width: 100%;
+        padding: 2rem;
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+        min-height: auto;
+      }
+
+      .panel-headline { font-size: 2.8rem; }
+      .panel-sub { display: none; }
+      .trust-row { display: none; }
+      .back-link { margin-bottom: 1.5rem; }
+
+      .panel-middle { margin: 1rem 0; }
+
+      .right-panel {
+        width: 100%;
+        padding: 2.5rem 1.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- LEFT PANEL -->
+  <div class="left-panel">
+    <div class="grid-bg"></div>
+    <div class="blob"></div>
+    <div class="gold-line"></div>
+
+    <svg class="pitch-art" viewBox="0 0 520 600" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="20" y="20" width="480" height="560" stroke="white" stroke-width="2.5"/>
+      <line x1="20" y1="300" x2="500" y2="300" stroke="white" stroke-width="1.5"/>
+      <circle cx="260" cy="300" r="80" stroke="white" stroke-width="1.5"/>
+      <circle cx="260" cy="300" r="4" fill="white"/>
+      <rect x="130" y="20" width="260" height="130" stroke="white" stroke-width="1.5"/>
+      <rect x="180" y="20" width="160" height="60" stroke="white" stroke-width="1.5"/>
+      <rect x="130" y="450" width="260" height="130" stroke="white" stroke-width="1.5"/>
+      <rect x="180" y="520" width="160" height="60" stroke="white" stroke-width="1.5"/>
+      <circle cx="260" cy="100" r="4" fill="white"/>
+      <circle cx="260" cy="500" r="4" fill="white"/>
+    </svg>
+
+    <div class="panel-top">
+      <a href="index.html" class="back-link">
+        <svg viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M9 2L4 7L9 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        Back to home
+      </a>
+
+      <div class="brand">
+        <svg class="brand-icon" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="18" cy="18" r="17" stroke="#ffd700" stroke-width="1.5"/>
+          <circle cx="18" cy="18" r="8" stroke="#0066ff" stroke-width="1.5"/>
+          <line x1="18" y1="1" x2="18" y2="35" stroke="#ffd700" stroke-width="1" opacity="0.4"/>
+          <line x1="1" y1="18" x2="35" y2="18" stroke="#ffd700" stroke-width="1" opacity="0.4"/>
+          <circle cx="18" cy="18" r="2.5" fill="#0066ff"/>
+        </svg>
+        <span class="brand-name">Kick<span>Off</span></span>
+      </div>
+    </div>
+
+    <div class="panel-middle">
+      <h2 class="panel-headline">
+        WELCOME<br>
+        <span class="gold">BACK</span><br>
+        <span class="blue">MANAGER.</span>
+      </h2>
+      <p class="panel-sub">
+        Sign in to your league dashboard. Your fixtures, standings and team stats are waiting.
+      </p>
+    </div>
+
+    <div class="panel-bottom">
+      <div class="trust-row">
+        <div class="trust-item">
+          <div class="trust-value">Live</div>
+          <div class="trust-label">Standings</div>
+        </div>
+        <div class="trust-item">
+          <div class="trust-value">Auto</div>
+          <div class="trust-label">Fixtures</div>
+        </div>
+        <div class="trust-item">
+          <div class="trust-value">Full</div>
+          <div class="trust-label">Knockout</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT PANEL -->
+  <div class="right-panel">
+    <div class="form-box">
+
+      <div class="form-heading">
+        <h1>Sign In</h1>
+        <p>No account yet? <a href="register.html">Create one free</a></p>
+      </div>
+
+      <div class="global-error" id="global-error"></div>
+
+      <!-- EMAIL -->
+      <div class="form-group">
+        <label for="email">Email Address</label>
+        <div class="input-wrap">
+          <svg class="input-icon" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="1" y="3" width="14" height="10" rx="1.5" stroke="white" stroke-width="1.3"/>
+            <path d="M1 5L8 9.5L15 5" stroke="white" stroke-width="1.3"/>
+          </svg>
+          <input type="email" id="email" placeholder="you@example.com" autocomplete="email"/>
+        </div>
+        <div class="field-error" id="err-email">Please enter a valid email address.</div>
+      </div>
+
+      <!-- PASSWORD -->
+      <div class="form-group">
+        <label for="password">Password</label>
+        <div class="input-wrap">
+          <svg class="input-icon" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="3" y="7" width="10" height="8" rx="1.5" stroke="white" stroke-width="1.3"/>
+            <path d="M5 7V5C5 3.34 6.34 2 8 2C9.66 2 11 3.34 11 5V7" stroke="white" stroke-width="1.3" stroke-linecap="round"/>
+            <circle cx="8" cy="11" r="1.2" fill="white"/>
+          </svg>
+          <input type="password" id="password" placeholder="••••••••" autocomplete="current-password"/>
+          <button class="pw-toggle" type="button" id="pw-toggle" aria-label="Toggle password">
+            <svg id="eye-icon" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M1 8C1 8 3.5 3 8 3C12.5 3 15 8 15 8C15 8 12.5 13 8 13C3.5 13 1 8 1 8Z" stroke="currentColor" stroke-width="1.3"/>
+              <circle cx="8" cy="8" r="2" stroke="currentColor" stroke-width="1.3"/>
+            </svg>
+          </button>
+        </div>
+        <div class="field-error" id="err-password">Password is required.</div>
+      </div>
+
+      <!-- REMEMBER / FORGOT -->
+      <div class="row-between">
+        <div class="remember-wrap">
+          <input type="checkbox" id="remember"/>
+          <label for="remember">Remember me</label>
+        </div>
+        <a href="#" class="forgot-link">Forgot password?</a>
+      </div>
+
+      <!-- SUBMIT -->
+      <button class="btn-submit" id="btn-submit" onclick="handleLogin()">
+        <div class="spinner" id="spinner"></div>
+        <span id="btn-label">Sign In</span>
+      </button>
+
+      <div class="divider"><span>or</span></div>
+
+      <div class="register-cta">
+        New to KickOff? <a href="#">Create your league for free →</a>
+      </div>
+
+      <div class="owner-callout">
+        <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M8 1L10 5.5H15L11 8.5L12.5 13.5L8 10.5L3.5 13.5L5 8.5L1 5.5H6Z" stroke="#ffd700" stroke-width="1.2" stroke-linejoin="round"/>
+        </svg>
+        <div class="callout-text">
+          <strong>League Owner?</strong> You'll land on your admin dashboard. Players go straight to their team page.
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="js/login.js"></script>
+</body>
+</html>

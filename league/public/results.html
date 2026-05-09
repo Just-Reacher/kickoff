@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Results — KickOff</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="icon" href="assets/favicon.ico" type="image/x-icon">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy:         #0a1628;
+      --navy-mid:     #0d1f3c;
+      --navy-light:   #152845;
+      --navy-card:    #101d35;
+      --navy-hover:   #13234a;
+      --blue:         #0066ff;
+      --blue-dim:     rgba(0,102,255,0.14);
+      --blue-glow:    rgba(0,102,255,0.28);
+      --gold:         #ffd700;
+      --gold-dim:     rgba(255,215,0,0.11);
+      --gold-border:  rgba(255,215,0,0.25);
+      --white:        #ffffff;
+      --white-dim:    rgba(255,255,255,0.5);
+      --white-faint:  rgba(255,255,255,0.06);
+      --border:       rgba(255,255,255,0.08);
+      --border-light: rgba(255,255,255,0.14);
+      --error:        #ff4d4d;
+      --error-dim:    rgba(255,77,77,0.12);
+      --success:      #00cc66;
+      --success-dim:  rgba(0,204,102,0.12);
+      --warning:      #ff9500;
+      --warning-dim:  rgba(255,149,0,0.14);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Barlow', sans-serif;
+      background: var(--navy);
+      color: var(--white);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── NAV (repeated block) ── */
+    .nav {
+      position: sticky; top: 0; z-index: 200;
+      background: rgba(10,22,40,0.92);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+      height: 62px;
+      display: flex; align-items: center;
+      padding: 0 2rem; gap: 1rem;
+    }
+    .nav-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; flex-shrink: 0; }
+    .nav-brand-icon { width: 28px; height: 28px; }
+    .nav-brand-name { font-family: 'Bebas Neue', sans-serif; font-size: 1.45rem; letter-spacing: 3px; color: var(--white); }
+    .nav-brand-name span { color: var(--gold); }
+    .nav-links { display: flex; align-items: center; gap: 0.25rem; margin-left: 1.5rem; list-style: none; flex: 1; }
+    .nav-links a {
+      display: flex; align-items: center; gap: 6px;
+      padding: 0.4rem 0.85rem; border-radius: 5px;
+      text-decoration: none; font-size: 0.8rem; font-weight: 600;
+      letter-spacing: 1.5px; text-transform: uppercase; color: var(--white-dim);
+      transition: color 0.2s, background 0.2s;
+    }
+    .nav-links a:hover { color: var(--white); background: var(--white-faint); }
+    .nav-links a.active { color: var(--white); background: var(--white-faint); }
+    .nav-links a svg { width: 13px; height: 13px; }
+    .nav-right { display: flex; align-items: center; gap: 0.75rem; margin-left: auto; }
+    .nav-notif {
+      position: relative; width: 36px; height: 36px; border-radius: 8px;
+      border: 1px solid var(--border); background: transparent; cursor: pointer;
+      display: flex; align-items: center; justify-content: center; color: var(--white-dim);
+      transition: border-color 0.2s, color 0.2s, background 0.2s;
+    }
+    .nav-notif:hover { border-color: var(--border-light); color: var(--white); background: var(--white-faint); }
+    .nav-notif svg { width: 16px; height: 16px; }
+    .notif-badge {
+      position: absolute; top: -4px; right: -4px; width: 16px; height: 16px;
+      background: var(--error); border-radius: 50%; border: 2px solid var(--navy);
+      font-size: 0.6rem; font-weight: 700; color: #fff;
+      display: none; align-items: center; justify-content: center;
+    }
+    .notif-badge.visible { display: flex; }
+    .nav-avatar {
+      display: flex; align-items: center; gap: 9px;
+      padding: 0.3rem 0.6rem 0.3rem 0.3rem;
+      border: 1px solid var(--border); border-radius: 8px; cursor: pointer;
+      transition: border-color 0.2s, background 0.2s; position: relative;
+    }
+    .nav-avatar:hover { border-color: var(--border-light); background: var(--white-faint); }
+    .avatar-circle {
+      width: 28px; height: 28px; border-radius: 6px; background: var(--blue);
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Bebas Neue', sans-serif; font-size: 0.9rem; color: var(--white); flex-shrink: 0;
+    }
+    .avatar-name { font-size: 0.82rem; font-weight: 500; color: var(--white); max-width: 100px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .avatar-dropdown {
+      position: absolute; top: calc(100% + 8px); right: 0; width: 180px;
+      background: var(--navy-mid); border: 1px solid var(--border-light); border-radius: 8px;
+      overflow: hidden; display: none; z-index: 300; box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+    }
+    .avatar-dropdown.open { display: block; }
+    .dropdown-item {
+      display: flex; align-items: center; gap: 10px; padding: 0.7rem 1rem;
+      font-size: 0.83rem; color: var(--white-dim); cursor: pointer;
+      transition: background 0.15s, color 0.15s; text-decoration: none;
+      border: none; background: none; width: 100%; text-align: left;
+    }
+    .dropdown-item:hover { background: var(--white-faint); color: var(--white); }
+    .dropdown-item svg { width: 14px; height: 14px; }
+    .dropdown-divider { height: 1px; background: var(--border); margin: 0.25rem 0; }
+    .dropdown-item.danger { color: var(--error); }
+    .dropdown-item.danger:hover { background: rgba(255,77,77,0.08); }
+
+    /* ── PAGE ── */
+    .page { flex: 1; max-width: 1000px; width: 100%; margin: 0 auto; padding: 2.5rem 2rem 5rem; }
+
+    /* ── PAGE HEADER ── */
+    .page-header {
+      display: flex; align-items: flex-start; justify-content: space-between;
+      margin-bottom: 2rem; gap: 1rem; flex-wrap: wrap;
+      animation: fadeUp 0.4s ease both;
+    }
+    .page-tag { font-size: 0.68rem; font-weight: 600; letter-spacing: 3px; text-transform: uppercase; color: var(--warning); margin-bottom: 0.35rem; }
+    .page-title { font-family: 'Bebas Neue', sans-serif; font-size: clamp(2rem, 4vw, 2.8rem); letter-spacing: 2px; line-height: 1; color: var(--white); }
+    .page-title span { color: var(--gold); }
+    .page-sub { font-size: 0.85rem; font-weight: 300; color: var(--white-dim); margin-top: 0.4rem; }
+
+    .header-right { display: flex; align-items: center; gap: 0.75rem; }
+    .league-selector-wrap { position: relative; }
+    .league-selector {
+      appearance: none; cursor: pointer;
+      padding: 0.6rem 2.2rem 0.6rem 1rem;
+      background: var(--navy-card); border: 1px solid var(--border);
+      border-radius: 6px; font-family: 'Barlow', sans-serif;
+      font-size: 0.85rem; font-weight: 500; color: var(--white);
+      outline: none; transition: border-color 0.2s;
+    }
+    .league-selector:focus { border-color: var(--blue); }
+    .selector-arrow { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); pointer-events: none; opacity: 0.4; }
+
+    /* ── OWNER ONLY BANNER ── */
+    .owner-banner {
+      background: var(--warning-dim);
+      border: 1px solid rgba(255,149,0,0.25);
+      border-left: 3px solid var(--warning);
+      border-radius: 8px; padding: 0.85rem 1.2rem;
+      display: flex; align-items: center; gap: 10px;
+      margin-bottom: 2rem; font-size: 0.84rem; font-weight: 300;
+      color: rgba(255,255,255,0.7); line-height: 1.5;
+      animation: fadeUp 0.4s 0.04s ease both;
+    }
+    .owner-banner svg { width: 16px; height: 16px; color: var(--warning); flex-shrink: 0; }
+    .owner-banner strong { color: var(--white); font-weight: 600; }
+    .owner-banner.hidden { display: none; }
+
+    /* ── SUMMARY STRIP ── */
+    .summary-strip {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 1px; background: var(--border);
+      border: 1px solid var(--border); border-radius: 8px;
+      overflow: hidden; margin-bottom: 2rem;
+      animation: fadeUp 0.4s 0.08s ease both;
+    }
+    .strip-card {
+      background: var(--navy-card); padding: 1rem 1.4rem;
+      display: flex; align-items: center; gap: 12px;
+      transition: background 0.2s;
+    }
+    .strip-card:hover { background: var(--navy-light); }
+    .strip-icon {
+      width: 36px; height: 36px; border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .strip-icon.warn  { background: var(--warning-dim); border: 1px solid rgba(255,149,0,0.25); }
+    .strip-icon.ok    { background: var(--success-dim); border: 1px solid rgba(0,204,102,0.25); }
+    .strip-icon.total { background: var(--blue-dim);    border: 1px solid rgba(0,102,255,0.25); }
+    .strip-icon svg   { width: 16px; height: 16px; }
+    .strip-value { font-family: 'Bebas Neue', sans-serif; font-size: 1.6rem; letter-spacing: 1px; line-height: 1; }
+    .strip-value.warn  { color: var(--warning); }
+    .strip-value.ok    { color: var(--success); }
+    .strip-value.total { color: var(--blue); }
+    .strip-label { font-size: 0.68rem; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: var(--white-dim); margin-top: 1px; }
+
+    /* ── FILTERS ── */
+    .filters {
+      display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap;
+      margin-bottom: 1.5rem; padding: 0.85rem 1.1rem;
+      background: var(--navy-card); border: 1px solid var(--border); border-radius: 8px;
+      animation: fadeUp 0.4s 0.12s ease both;
+    }
+    .filter-label { font-size: 0.7rem; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: var(--white-dim); flex-shrink: 0; margin-right: 0.25rem; }
+    .chip {
+      padding: 0.28rem 0.8rem; border-radius: 100px;
+      border: 1px solid var(--border); background: transparent;
+      font-family: 'Barlow', sans-serif; font-size: 0.78rem; font-weight: 500;
+      color: var(--white-dim); cursor: pointer; transition: all 0.2s; white-space: nowrap;
+    }
+    .chip:hover { border-color: var(--border-light); color: var(--white); }
+    .chip.active { background: var(--blue); border-color: var(--blue); color: var(--white); }
+    .chip.active-warn { background: var(--warning-dim); border-color: rgba(255,149,0,0.4); color: var(--warning); }
+
+    /* ── BULK ACTION BAR ── */
+    .bulk-bar {
+      display: none; align-items: center; gap: 1rem;
+      padding: 0.85rem 1.2rem;
+      background: var(--blue-dim); border: 1px solid rgba(0,102,255,0.25);
+      border-radius: 8px; margin-bottom: 1rem;
+      animation: fadeUp 0.3s ease both;
+    }
+    .bulk-bar.visible { display: flex; }
+    .bulk-count { font-size: 0.85rem; font-weight: 500; color: var(--white); flex: 1; }
+    .bulk-count span { color: var(--blue); font-family: 'Bebas Neue', sans-serif; font-size: 1.1rem; }
+    .btn-bulk-approve {
+      display: flex; align-items: center; gap: 6px;
+      padding: 0.5rem 1rem;
+      background: var(--success); border: none; border-radius: 6px;
+      font-family: 'Bebas Neue', sans-serif; font-size: 0.9rem; letter-spacing: 1.5px;
+      color: var(--white); cursor: pointer; transition: background 0.2s, transform 0.1s;
+    }
+    .btn-bulk-approve:hover { background: #00aa55; transform: scale(1.02); }
+    .btn-bulk-approve svg { width: 13px; height: 13px; }
+    .btn-bulk-reject {
+      display: flex; align-items: center; gap: 6px;
+      padding: 0.5rem 1rem;
+      background: transparent; border: 1px solid rgba(255,77,77,0.35); border-radius: 6px;
+      font-family: 'Bebas Neue', sans-serif; font-size: 0.9rem; letter-spacing: 1.5px;
+      color: var(--error); cursor: pointer; transition: background 0.2s, border-color 0.2s;
+    }
+    .btn-bulk-reject:hover { background: var(--error-dim); border-color: var(--error); }
+    .btn-bulk-reject svg { width: 13px; height: 13px; }
+
+    /* ── RESULTS LIST ── */
+    .results-list { display: flex; flex-direction: column; gap: 0.6rem; animation: fadeUp 0.4s 0.16s ease both; }
+
+    /* ── RESULT CARD ── */
+    .result-card {
+      background: var(--navy-card); border: 1px solid var(--border);
+      border-radius: 10px; overflow: hidden;
+      transition: border-color 0.2s, background 0.2s;
+      animation: slideIn 0.35s ease both;
+      position: relative;
+    }
+    .result-card:hover { background: var(--navy-hover); border-color: var(--border-light); }
+
+    /* status strip */
+    .result-card::before {
+      content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
+    }
+    .result-card.pending::before  { background: var(--warning); }
+    .result-card.approved::before { background: var(--success); }
+    .result-card.rejected::before { background: var(--error); }
+
+    .result-card-body {
+      display: grid;
+      grid-template-columns: auto 1fr auto 1fr auto;
+      align-items: center; gap: 0.75rem;
+      padding: 1rem 1.2rem 1rem 1.5rem;
+    }
+
+    /* select checkbox */
+    .result-check {
+      width: 18px; height: 18px; accent-color: var(--blue);
+      cursor: pointer; flex-shrink: 0;
+    }
+
+    /* match teams */
+    .result-teams { display: contents; }
+
+    .result-team {
+      display: flex; flex-direction: column; gap: 3px;
+    }
+    .result-team.right { text-align: right; align-items: flex-end; }
+
+    .result-team-name { font-size: 0.9rem; font-weight: 500; color: var(--white); }
+    .result-team-player { font-size: 0.7rem; font-weight: 300; color: var(--white-dim); }
+
+    /* score center */
+    .result-score-wrap { text-align: center; flex-shrink: 0; }
+    .result-score {
+      font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem;
+      letter-spacing: 4px; color: var(--white); line-height: 1;
+    }
+    .result-matchday { font-size: 0.62rem; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: var(--white-dim); margin-top: 2px; }
+
+    /* ── RESULT FOOTER ── */
+    .result-footer {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0.65rem 1.2rem 0.65rem 1.5rem;
+      border-top: 1px solid var(--border);
+      background: var(--navy-mid);
+      gap: 1rem; flex-wrap: wrap;
+    }
+
+    .result-meta { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
+
+    .result-meta-item {
+      display: flex; align-items: center; gap: 5px;
+      font-size: 0.72rem; font-weight: 300; color: var(--white-dim);
+    }
+    .result-meta-item svg { width: 11px; height: 11px; opacity: 0.4; }
+
+    .result-status-badge {
+      font-size: 0.62rem; font-weight: 700; letter-spacing: 2px;
+      text-transform: uppercase; padding: 0.22rem 0.55rem; border-radius: 3px;
+    }
+    .result-status-badge.pending  { background: var(--warning-dim); border: 1px solid rgba(255,149,0,0.3); color: var(--warning); }
+    .result-status-badge.approved { background: var(--success-dim); border: 1px solid rgba(0,204,102,0.28); color: var(--success); }
+    .result-status-badge.rejected { background: var(--error-dim);   border: 1px solid rgba(255,77,77,0.28); color: var(--error); }
+
+    /* action buttons */
+    .result-actions { display: flex; gap: 0.4rem; flex-shrink: 0; }
+
+    .btn-approve {
+      display: flex; align-items: center; gap: 5px;
+      padding: 0.4rem 0.85rem;
+      background: var(--success-dim); border: 1px solid rgba(0,204,102,0.3);
+      border-radius: 5px; font-family: 'Bebas Neue', sans-serif;
+      font-size: 0.82rem; letter-spacing: 1.5px; color: var(--success);
+      cursor: pointer; transition: background 0.2s, border-color 0.2s, transform 0.1s;
+      white-space: nowrap;
+    }
+    .btn-approve:hover { background: var(--success); color: var(--white); border-color: var(--success); transform: scale(1.02); }
+    .btn-approve svg { width: 11px; height: 11px; }
+
+    .btn-reject {
+      display: flex; align-items: center; gap: 5px;
+      padding: 0.4rem 0.85rem;
+      background: var(--error-dim); border: 1px solid rgba(255,77,77,0.3);
+      border-radius: 5px; font-family: 'Bebas Neue', sans-serif;
+      font-size: 0.82rem; letter-spacing: 1.5px; color: var(--error);
+      cursor: pointer; transition: background 0.2s, border-color 0.2s, transform 0.1s;
+      white-space: nowrap;
+    }
+    .btn-reject:hover { background: var(--error); color: var(--white); border-color: var(--error); transform: scale(1.02); }
+    .btn-reject svg { width: 11px; height: 11px; }
+
+    .btn-already {
+      padding: 0.4rem 0.85rem;
+      background: transparent; border: 1px solid var(--border); border-radius: 5px;
+      font-family: 'Bebas Neue', sans-serif; font-size: 0.82rem;
+      letter-spacing: 1.5px; color: var(--white-dim); cursor: default;
+    }
+
+    /* ── TOAST NOTIFICATION ── */
+    .toast {
+      position: fixed; bottom: 2rem; right: 2rem; z-index: 600;
+      background: var(--navy-mid); border: 1px solid var(--border-light);
+      border-radius: 8px; padding: 0.85rem 1.2rem;
+      display: flex; align-items: center; gap: 10px;
+      font-size: 0.85rem; font-weight: 400; color: var(--white);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+      transform: translateY(100px); opacity: 0;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+      max-width: 320px;
+    }
+    .toast.show { transform: translateY(0); opacity: 1; }
+    .toast-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .toast-dot.success { background: var(--success); }
+    .toast-dot.error   { background: var(--error); }
+    .toast-dot.warn    { background: var(--warning); }
+
+    /* ── SKELETON ── */
+    .skeleton {
+      background: linear-gradient(90deg, var(--navy-card) 25%, var(--navy-light) 50%, var(--navy-card) 75%);
+      background-size: 400% 100%; border-radius: 10px;
+      animation: shimmer 1.4s ease infinite;
+      height: 96px; margin-bottom: 0.6rem;
+    }
+
+    /* ── EMPTY STATE ── */
+    .empty-state { display: none; text-align: center; padding: 4rem 2rem; }
+    .empty-state.visible { display: block; }
+    .empty-icon {
+      width: 56px; height: 56px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 1.2rem;
+    }
+    .empty-icon.pending-icon { background: var(--warning-dim); border: 1px solid rgba(255,149,0,0.25); }
+    .empty-icon.done-icon    { background: var(--success-dim); border: 1px solid rgba(0,204,102,0.25); }
+    .empty-icon svg { width: 24px; height: 24px; }
+    .empty-title { font-family: 'Bebas Neue', sans-serif; font-size: 1.6rem; letter-spacing: 2px; color: var(--white); margin-bottom: 0.5rem; }
+    .empty-sub { font-size: 0.88rem; font-weight: 300; color: var(--white-dim); line-height: 1.7; }
+
+    /* ── NOT OWNER ── */
+    .not-owner {
+      max-width: 480px; margin: 4rem auto; text-align: center;
+      padding: 3rem 2rem; background: var(--navy-card);
+      border: 1px solid var(--border); border-radius: 10px; display: none;
+    }
+    .not-owner.visible { display: block; }
+    .not-owner-title { font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem; letter-spacing: 2px; color: var(--white); margin-bottom: 0.5rem; }
+    .not-owner-sub { font-size: 0.88rem; font-weight: 300; color: var(--white-dim); line-height: 1.7; }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp  { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes slideIn { from { opacity: 0; transform: translateX(-8px); } to { opacity: 1; transform: translateX(0); } }
+    @keyframes shimmer { 0% { background-position: 100% 0; } 100% { background-position: -100% 0; } }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+      .page { padding: 1.5rem 1rem 4rem; }
+      .result-card-body { grid-template-columns: auto 1fr auto 1fr; gap: 0.5rem; }
+      .result-score-wrap { grid-column: 1 / -1; text-align: center; border-top: 1px solid var(--border); padding-top: 0.5rem; }
+      .summary-strip { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV (repeated block) -->
+  <nav class="nav">
+    <a href="dashboard.html" class="nav-brand">
+      <svg class="nav-brand-icon" viewBox="0 0 28 28" fill="none">
+        <circle cx="14" cy="14" r="13" stroke="#ffd700" stroke-width="1.3"/>
+        <circle cx="14" cy="14" r="6"  stroke="#0066ff" stroke-width="1.3"/>
+        <line x1="14" y1="1"  x2="14" y2="27" stroke="#ffd700" stroke-width="1" opacity="0.4"/>
+        <line x1="1"  y1="14" x2="27" y2="14" stroke="#ffd700" stroke-width="1" opacity="0.4"/>
+        <circle cx="14" cy="14" r="2" fill="#0066ff"/>
+      </svg>
+      <span class="nav-brand-name">Kick<span>Off</span></span>
+    </a>
+
+    <ul class="nav-links">
+      <li><a href="dashboard.html">
+        <svg viewBox="0 0 13 13" fill="none"><rect x="1" y="1" width="4.5" height="4.5" rx="1" stroke="currentColor" stroke-width="1.2"/><rect x="7.5" y="1" width="4.5" height="4.5" rx="1" stroke="currentColor" stroke-width="1.2"/><rect x="1" y="7.5" width="4.5" height="4.5" rx="1" stroke="currentColor" stroke-width="1.2"/><rect x="7.5" y="7.5" width="4.5" height="4.5" rx="1" stroke="currentColor" stroke-width="1.2"/></svg>
+        Dashboard
+      </a></li>
+      <li><a href="fixtures.html">
+        <svg viewBox="0 0 13 13" fill="none"><rect x="1" y="2" width="11" height="10" rx="1" stroke="currentColor" stroke-width="1.2"/><line x1="1" y1="5" x2="12" y2="5" stroke="currentColor" stroke-width="1.2"/><line x1="4.5" y1="1" x2="4.5" y2="3.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><line x1="8.5" y1="1" x2="8.5" y2="3.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+        Fixtures
+      </a></li>
+      <li><a href="table.html">
+        <svg viewBox="0 0 13 13" fill="none"><path d="M2 11 L2 7 L5 7 L5 11" stroke="currentColor" stroke-width="1.2"/><path d="M5.5 11 L5.5 4 L8.5 4 L8.5 11" stroke="currentColor" stroke-width="1.2"/><path d="M9 11 L9 1 L12 1 L12 11" stroke="currentColor" stroke-width="1.2"/><line x1="1" y1="11" x2="13" y2="11" stroke="currentColor" stroke-width="1.2"/></svg>
+        Table
+      </a></li>
+      <li><a href="knockout.html">
+        <svg viewBox="0 0 13 13" fill="none"><path d="M6.5 1L8 4.5H12L9 6.5L10 10L6.5 8L3 10L4 6.5L1 4.5H5Z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg>
+        Knockout
+      </a></li>
+      <li><a href="my-team.html">
+        <svg viewBox="0 0 13 13" fill="none"><circle cx="6.5" cy="4.5" r="2.5" stroke="currentColor" stroke-width="1.2"/><path d="M1.5 12C1.5 9.5 3.7 7.5 6.5 7.5C9.3 7.5 11.5 9.5 11.5 12" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+        My Team
+      </a></li>
+    </ul>
+
+    <div class="nav-right">
+      <div style="position:relative;">
+        <button class="nav-notif" onclick="toggleNotifPanel()">
+          <svg viewBox="0 0 16 16" fill="none"><path d="M8 2C8 2 4 3.5 4 8V11H12V8C12 3.5 8 2 8 2Z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><path d="M6 11V12C6 13.1 6.9 14 8 14C9.1 14 10 13.1 10 12V11" stroke="currentColor" stroke-width="1.3"/></svg>
+          <span class="notif-badge" id="notif-badge"></span>
+        </button>
+      </div>
+      <div class="nav-avatar" id="avatar-btn" onclick="toggleAvatarDropdown()">
+        <div class="avatar-circle" id="avatar-circle">S</div>
+        <span class="avatar-name" id="avatar-name">Player</span>
+        <svg width="10" height="10" viewBox="0 0 10 10" fill="none" style="opacity:0.4"><path d="M2 4L5 7L8 4" stroke="white" stroke-width="1.3" stroke-linecap="round"/></svg>
+        <div class="avatar-dropdown" id="avatar-dropdown">
+          <a href="my-team.html" class="dropdown-item">
+            <svg viewBox="0 0 14 14" fill="none"><circle cx="7" cy="5" r="3" stroke="currentColor" stroke-width="1.2"/><path d="M1.5 13C1.5 10.5 4 8.5 7 8.5C10 8.5 12.5 10.5 12.5 13" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+            My Profile
+          </a>
+          <div class="dropdown-divider"></div>
+          <button class="dropdown-item danger" onclick="handleSignOut()">
+            <svg viewBox="0 0 14 14" fill="none"><path d="M5 2H2C1.4 2 1 2.4 1 3V11C1 11.6 1.4 12 2 12H5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><path d="M9 4.5L12 7L9 9.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><line x1="12" y1="7" x2="5" y2="7" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+            Sign Out
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- PAGE -->
+  <div class="page">
+
+    <!-- HEADER -->
+    <div class="page-header">
+      <div>
+        <div class="page-tag">Owner Only</div>
+        <h1 class="page-title">Match <span>Results</span></h1>
+        <p class="page-sub" id="page-sub">Review and approve submitted match results.</p>
+      </div>
+      <div class="header-right">
+        <div class="league-selector-wrap">
+          <select class="league-selector" id="league-selector" onchange="handleLeagueChange()">
+            <option value="">Loading...</option>
+          </select>
+          <svg class="selector-arrow" viewBox="0 0 10 10" fill="none" width="10" height="10"><path d="M2 4L5 7L8 4" stroke="white" stroke-width="1.3" stroke-linecap="round"/></svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- OWNER BANNER -->
+    <div class="owner-banner" id="owner-banner">
+      <svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.3"/><line x1="8" y1="5" x2="8" y2="8.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><circle cx="8" cy="11" r="0.8" fill="currentColor"/></svg>
+      <div><strong>You are the league owner.</strong> Approve or reject submitted results below. The table only updates after you confirm a result.</div>
+    </div>
+
+    <!-- NOT OWNER -->
+    <div class="not-owner" id="not-owner">
+      <div class="not-owner-title">Owner Access Only</div>
+      <p class="not-owner-sub">Only the league owner can approve or reject results. You can submit your own results from the <a href="fixtures.html" style="color:var(--blue)">Fixtures page</a>.</p>
+    </div>
+
+    <!-- SUMMARY STRIP -->
+    <div class="summary-strip" id="summary-strip">
+      <div class="strip-card">
+        <div class="strip-icon warn">
+          <svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="#ff9500" stroke-width="1.3"/><line x1="8" y1="5" x2="8" y2="8.5" stroke="#ff9500" stroke-width="1.4" stroke-linecap="round"/><circle cx="8" cy="11" r="0.8" fill="#ff9500"/></svg>
+        </div>
+        <div class="strip-text">
+          <div class="strip-value warn" id="count-pending">—</div>
+          <div class="strip-label">Pending Approval</div>
+        </div>
+      </div>
+      <div class="strip-card">
+        <div class="strip-icon ok">
+          <svg viewBox="0 0 16 16" fill="none"><path d="M3 8L7 12L13 5" stroke="#00cc66" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="strip-text">
+          <div class="strip-value ok" id="count-approved">—</div>
+          <div class="strip-label">Approved</div>
+        </div>
+      </div>
+      <div class="strip-card">
+        <div class="strip-icon total">
+          <svg viewBox="0 0 16 16" fill="none"><rect x="2" y="3" width="12" height="10" rx="1.5" stroke="#0066ff" stroke-width="1.3"/><line x1="2" y1="6.5" x2="14" y2="6.5" stroke="#0066ff" stroke-width="1.3"/></svg>
+        </div>
+        <div class="strip-text">
+          <div class="strip-value total" id="count-total">—</div>
+          <div class="strip-label">Total Results</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FILTERS -->
+    <div class="filters" id="filters-bar">
+      <span class="filter-label">Status</span>
+      <button class="chip active"       id="chip-all"      onclick="filterStatus('all', this)">All</button>
+      <button class="chip active-warn"  id="chip-pending"  onclick="filterStatus('pending', this)" style="background:var(--warning-dim);border-color:rgba(255,149,0,0.4);color:var(--warning);">Pending</button>
+      <button class="chip"              id="chip-approved" onclick="filterStatus('approved', this)">Approved</button>
+      <button class="chip"              id="chip-rejected" onclick="filterStatus('rejected', this)">Rejected</button>
+    </div>
+
+    <!-- BULK BAR -->
+    <div class="bulk-bar" id="bulk-bar">
+      <div class="bulk-count"><span id="selected-count">0</span> selected</div>
+      <button class="btn-bulk-approve" onclick="bulkAction('approve')">
+        <svg viewBox="0 0 13 13" fill="none"><path d="M2 6.5L5 9.5L11 3.5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Approve All
+      </button>
+      <button class="btn-bulk-reject" onclick="bulkAction('reject')">
+        <svg viewBox="0 0 13 13" fill="none"><line x1="2" y1="2" x2="11" y2="11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="11" y1="2" x2="2" y2="11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        Reject All
+      </button>
+    </div>
+
+    <!-- RESULTS LIST -->
+    <div class="results-list" id="results-list">
+      <div class="skeleton"></div>
+      <div class="skeleton" style="opacity:.7"></div>
+      <div class="skeleton" style="opacity:.45"></div>
+    </div>
+
+    <!-- EMPTY STATE -->
+    <div class="empty-state" id="empty-state">
+      <div class="empty-icon done-icon">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M5 12L10 17L20 7" stroke="#00cc66" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <div class="empty-title" id="empty-title">All Clear</div>
+      <p class="empty-sub" id="empty-sub">No pending results to review. You're all caught up.</p>
+    </div>
+
+  </div>
+
+  <!-- TOAST -->
+  <div class="toast" id="toast">
+    <div class="toast-dot" id="toast-dot"></div>
+    <span id="toast-msg"></span>
+  </div>
+
+  <script src="js/results.js"></script>
+</body>
+</html>

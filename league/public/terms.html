@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Terms of Service — KickOff</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="icon" href="assets/favicon.ico" type="image/x-icon">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy:         #0a1628;
+      --navy-mid:     #0d1f3c;
+      --navy-light:   #152845;
+      --navy-card:    #101d35;
+      --blue:         #0066ff;
+      --blue-dim:     rgba(0,102,255,0.14);
+      --gold:         #ffd700;
+      --gold-dim:     rgba(255,215,0,0.11);
+      --gold-border:  rgba(255,215,0,0.25);
+      --white:        #ffffff;
+      --white-dim:    rgba(255,255,255,0.5);
+      --white-faint:  rgba(255,255,255,0.06);
+      --border:       rgba(255,255,255,0.08);
+      --border-light: rgba(255,255,255,0.14);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Barlow', sans-serif;
+      background: var(--navy);
+      color: var(--white);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── NAV ── */
+    .nav {
+      position: sticky; top: 0; z-index: 200;
+      background: rgba(10,22,40,0.92);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+      height: 62px;
+      display: flex; align-items: center;
+      padding: 0 2rem; gap: 1rem;
+    }
+
+    .nav-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+    .nav-brand-icon { width: 28px; height: 28px; }
+    .nav-brand-name { font-family: 'Bebas Neue', sans-serif; font-size: 1.45rem; letter-spacing: 3px; color: var(--white); }
+    .nav-brand-name span { color: var(--gold); }
+
+    .nav-back {
+      margin-left: auto;
+      display: flex; align-items: center; gap: 7px;
+      text-decoration: none; font-size: 0.8rem; font-weight: 600;
+      letter-spacing: 1.5px; text-transform: uppercase;
+      color: var(--white-dim); transition: color 0.2s;
+    }
+    .nav-back:hover { color: var(--white); }
+    .nav-back svg { width: 14px; height: 14px; }
+
+    /* ── HERO ── */
+    .hero {
+      background: var(--navy-mid);
+      border-bottom: 1px solid var(--border);
+      padding: 3.5rem 2rem 3rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 3px;
+      background: linear-gradient(to right, var(--blue), var(--gold));
+    }
+
+    .hero-grid {
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+      background-size: 50px 50px;
+      pointer-events: none;
+    }
+
+    .hero-tag {
+      font-size: 0.68rem; font-weight: 600; letter-spacing: 3px;
+      text-transform: uppercase; color: var(--blue);
+      margin-bottom: 0.75rem; position: relative; z-index: 1;
+    }
+
+    .hero-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(2.5rem, 6vw, 4rem);
+      letter-spacing: 3px; color: var(--white);
+      position: relative; z-index: 1; margin-bottom: 0.75rem;
+    }
+
+    .hero-title span { color: var(--gold); }
+
+    .hero-meta {
+      font-size: 0.82rem; font-weight: 300; color: var(--white-dim);
+      position: relative; z-index: 1;
+    }
+
+    /* ── LAYOUT ── */
+    .layout {
+      max-width: 1000px; width: 100%; margin: 0 auto;
+      padding: 3rem 2rem 5rem;
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      gap: 3rem;
+      align-items: start;
+    }
+
+    /* ── SIDEBAR TOC ── */
+    .toc {
+      position: sticky; top: 80px;
+      background: var(--navy-card);
+      border: 1px solid var(--border);
+      border-radius: 10px; padding: 1.2rem;
+    }
+
+    .toc-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 0.85rem; letter-spacing: 2px;
+      color: var(--white-dim); margin-bottom: 0.85rem;
+      padding-bottom: 0.6rem; border-bottom: 1px solid var(--border);
+    }
+
+    .toc-list { list-style: none; display: flex; flex-direction: column; gap: 0.1rem; }
+
+    .toc-list a {
+      display: block; padding: 0.4rem 0.6rem;
+      font-size: 0.78rem; font-weight: 400; color: var(--white-dim);
+      text-decoration: none; border-radius: 5px;
+      transition: background 0.15s, color 0.15s;
+      line-height: 1.4;
+    }
+
+    .toc-list a:hover { background: var(--white-faint); color: var(--white); }
+    .toc-list a.active { background: var(--blue-dim); color: var(--blue); }
+
+    /* ── CONTENT ── */
+    .content { min-width: 0; }
+
+    .section {
+      margin-bottom: 3rem;
+      animation: fadeUp 0.5s ease both;
+      scroll-margin-top: 80px;
+    }
+
+    .section-num {
+      font-size: 0.68rem; font-weight: 700; letter-spacing: 3px;
+      text-transform: uppercase; color: var(--blue); margin-bottom: 0.4rem;
+    }
+
+    .section-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.6rem; letter-spacing: 2px;
+      color: var(--white); margin-bottom: 1rem;
+      padding-bottom: 0.6rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .section p {
+      font-size: 0.92rem; font-weight: 300;
+      color: rgba(255,255,255,0.72); line-height: 1.9;
+      margin-bottom: 1rem;
+    }
+
+    .section p:last-child { margin-bottom: 0; }
+
+    .section ul {
+      list-style: none; margin: 0.75rem 0 1rem; padding: 0;
+      display: flex; flex-direction: column; gap: 0.5rem;
+    }
+
+    .section ul li {
+      display: flex; align-items: flex-start; gap: 10px;
+      font-size: 0.9rem; font-weight: 300;
+      color: rgba(255,255,255,0.72); line-height: 1.7;
+    }
+
+    .section ul li::before {
+      content: '—'; color: var(--blue); flex-shrink: 0;
+      margin-top: 1px; opacity: 0.7;
+    }
+
+    .section strong { color: var(--white); font-weight: 600; }
+
+    /* highlight box */
+    .highlight-box {
+      background: var(--blue-dim);
+      border: 1px solid rgba(0,102,255,0.2);
+      border-left: 3px solid var(--blue);
+      border-radius: 6px; padding: 1rem 1.2rem;
+      margin: 1rem 0;
+      font-size: 0.88rem; font-weight: 300;
+      color: rgba(255,255,255,0.7); line-height: 1.7;
+    }
+
+    .highlight-box.gold {
+      background: var(--gold-dim);
+      border-color: var(--gold-border);
+      border-left-color: var(--gold);
+    }
+
+    .highlight-box strong { color: var(--white); }
+
+    /* ── DIVIDER ── */
+    .content-divider { height: 1px; background: var(--border); margin: 2rem 0; }
+
+    /* ── LAST UPDATED BADGE ── */
+    .last-updated {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: var(--gold-dim); border: 1px solid var(--gold-border);
+      border-radius: 100px; padding: 0.3rem 0.9rem;
+      font-size: 0.72rem; font-weight: 600; letter-spacing: 1.5px;
+      text-transform: uppercase; color: var(--gold);
+      margin-bottom: 2rem;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--navy-mid);
+      border-top: 1px solid var(--border);
+      padding: 2rem; text-align: center;
+      font-size: 0.78rem; font-weight: 300;
+      color: rgba(255,255,255,0.25);
+      display: flex; align-items: center; justify-content: center; gap: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    footer a { color: rgba(255,255,255,0.35); text-decoration: none; }
+    footer a:hover { color: var(--white); }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      .layout { grid-template-columns: 1fr; }
+      .toc { display: none; }
+      .layout { padding: 2rem 1rem 4rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav class="nav">
+    <a href="index.html" class="nav-brand">
+      <svg class="nav-brand-icon" viewBox="0 0 28 28" fill="none">
+        <circle cx="14" cy="14" r="13" stroke="#ffd700" stroke-width="1.3"/>
+        <circle cx="14" cy="14" r="6"  stroke="#0066ff" stroke-width="1.3"/>
+        <line x1="14" y1="1"  x2="14" y2="27" stroke="#ffd700" stroke-width="1" opacity="0.4"/>
+        <line x1="1"  y1="14" x2="27" y2="14" stroke="#ffd700" stroke-width="1" opacity="0.4"/>
+        <circle cx="14" cy="14" r="2" fill="#0066ff"/>
+      </svg>
+      <span class="nav-brand-name">Kick<span>Off</span></span>
+    </a>
+    <a href="register.html" class="nav-back">
+      <svg viewBox="0 0 14 14" fill="none"><path d="M9 2L4 7L9 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Back to Register
+    </a>
+  </nav>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-grid"></div>
+    <div class="hero-tag">Legal</div>
+    <h1 class="hero-title">Terms of <span>Service</span></h1>
+    <p class="hero-meta">Effective Date: January 1, 2025 &nbsp;·&nbsp; Last Updated: May 2025</p>
+  </div>
+
+  <!-- LAYOUT -->
+  <div class="layout">
+
+    <!-- SIDEBAR TOC -->
+    <nav class="toc">
+      <div class="toc-title">Contents</div>
+      <ul class="toc-list">
+        <li><a href="#s1">1. Acceptance</a></li>
+        <li><a href="#s2">2. The Service</a></li>
+        <li><a href="#s3">3. Accounts</a></li>
+        <li><a href="#s4">4. User Conduct</a></li>
+        <li><a href="#s5">5. Leagues & Competitions</a></li>
+        <li><a href="#s6">6. Results & Disputes</a></li>
+        <li><a href="#s7">7. Intellectual Property</a></li>
+        <li><a href="#s8">8. Disclaimers</a></li>
+        <li><a href="#s9">9. Limitation of Liability</a></li>
+        <li><a href="#s10">10. Termination</a></li>
+        <li><a href="#s11">11. Changes to Terms</a></li>
+        <li><a href="#s12">12. Contact</a></li>
+      </ul>
+    </nav>
+
+    <!-- CONTENT -->
+    <div class="content">
+
+      <div class="last-updated">Last Updated — May 2025</div>
+
+      <div class="highlight-box gold">
+        <strong>Please read these terms carefully.</strong> By creating an account or using KickOff, you agree to be bound by these Terms of Service. If you do not agree, do not use the platform.
+      </div>
+
+      <!-- 1 -->
+      <div class="section" id="s1">
+        <div class="section-num">Section 01</div>
+        <h2 class="section-title">Acceptance of Terms</h2>
+        <p>By accessing or using KickOff ("the Platform", "we", "us", or "our"), you agree to be bound by these Terms of Service and all applicable laws and regulations. These terms apply to all users of the platform including league owners, players, and visitors.</p>
+        <p>If you are using KickOff on behalf of an organisation, you represent that you have authority to bind that organisation to these terms.</p>
+      </div>
+
+      <!-- 2 -->
+      <div class="section" id="s2">
+        <div class="section-num">Section 02</div>
+        <h2 class="section-title">The Service</h2>
+        <p>KickOff is a league management platform designed for eFootball competitors. The platform allows users to:</p>
+        <ul>
+          <li>Create and manage football leagues</li>
+          <li>Invite other players to join leagues via unique invite codes</li>
+          <li>Schedule and track match fixtures automatically</li>
+          <li>Submit and approve match results</li>
+          <li>View live standings, statistics and knockout brackets</li>
+        </ul>
+        <p>KickOff is provided free of charge. We reserve the right to introduce paid features in the future with appropriate notice to users.</p>
+        <div class="highlight-box">
+          <strong>Not affiliated with Konami or eFootball.</strong> KickOff is an independent platform. We are not affiliated with, endorsed by, or connected to Konami Digital Entertainment or the eFootball brand in any way.
+        </div>
+      </div>
+
+      <!-- 3 -->
+      <div class="section" id="s3">
+        <div class="section-num">Section 03</div>
+        <h2 class="section-title">User Accounts</h2>
+        <p>To use KickOff you must create an account. You agree to:</p>
+        <ul>
+          <li>Provide accurate, current and complete information during registration</li>
+          <li>Maintain the security of your password and account credentials</li>
+          <li>Not share your account with any other person</li>
+          <li>Notify us immediately of any unauthorised use of your account</li>
+          <li>Accept responsibility for all activity that occurs under your account</li>
+        </ul>
+        <p>You must be at least 13 years of age to create an account. By registering, you confirm that you meet this requirement.</p>
+        <p>We reserve the right to refuse registration, suspend, or terminate accounts at our discretion, particularly where these terms have been violated.</p>
+      </div>
+
+      <!-- 4 -->
+      <div class="section" id="s4">
+        <div class="section-num">Section 04</div>
+        <h2 class="section-title">User Conduct</h2>
+        <p>You agree to use KickOff in a fair, respectful and lawful manner. The following conduct is strictly prohibited:</p>
+        <ul>
+          <li>Submitting false or fraudulent match results</li>
+          <li>Impersonating another user, league owner, or any person</li>
+          <li>Attempting to manipulate league standings through dishonest means</li>
+          <li>Harassing, abusing, or threatening other users</li>
+          <li>Using the platform to distribute spam, malware, or harmful content</li>
+          <li>Attempting to gain unauthorised access to other accounts or systems</li>
+          <li>Using automated scripts or bots to interact with the platform</li>
+        </ul>
+        <p>Violation of these rules may result in immediate account suspension or permanent ban without notice.</p>
+      </div>
+
+      <!-- 5 -->
+      <div class="section" id="s5">
+        <div class="section-num">Section 05</div>
+        <h2 class="section-title">Leagues & Competitions</h2>
+        <p>Any user may create a league on KickOff. The user who creates a league becomes the <strong>League Owner</strong> for that competition. As league owner, you are responsible for:</p>
+        <ul>
+          <li>Ensuring all participants understand and agree to the rules of your league</li>
+          <li>Reviewing and making fair decisions on submitted match results</li>
+          <li>Managing the invite code responsibly and only sharing it with intended participants</li>
+          <li>Not abusing owner privileges to unfairly influence competitive outcomes</li>
+        </ul>
+        <p>Invite codes expire automatically once the maximum number of teams has joined the league. After expiry, no new players may join unless the owner creates a new league.</p>
+        <p>KickOff does not intervene in disputes between league participants. The league owner has final authority over their competition.</p>
+      </div>
+
+      <!-- 6 -->
+      <div class="section" id="s6">
+        <div class="section-num">Section 06</div>
+        <h2 class="section-title">Results & Disputes</h2>
+        <p>Match results are submitted by players and must be approved by the league owner before they affect the standings table. By submitting a result, you confirm that:</p>
+        <ul>
+          <li>The score accurately reflects the match played on eFootball</li>
+          <li>You have not manipulated the result in any way</li>
+          <li>You accept that the league owner has authority to approve or reject the submission</li>
+        </ul>
+        <p>KickOff is not responsible for disputes arising from incorrect, falsified, or contested results. All disputes must be resolved between the players and league owner directly.</p>
+        <div class="highlight-box">
+          <strong>Fair play matters.</strong> Submitting false results is a violation of these terms and may result in your account being permanently banned from the platform.
+        </div>
+      </div>
+
+      <!-- 7 -->
+      <div class="section" id="s7">
+        <div class="section-num">Section 07</div>
+        <h2 class="section-title">Intellectual Property</h2>
+        <p>All content on KickOff — including but not limited to the design, code, logos, graphics, and text — is owned by KickOff and protected by applicable intellectual property laws.</p>
+        <p>You may not reproduce, distribute, modify, or create derivative works from any part of the platform without our express written permission.</p>
+        <p>By creating content on KickOff (such as league names, team names, and other data), you grant us a non-exclusive, royalty-free licence to store, display, and use that content in connection with operating the platform.</p>
+      </div>
+
+      <!-- 8 -->
+      <div class="section" id="s8">
+        <div class="section-num">Section 08</div>
+        <h2 class="section-title">Disclaimers</h2>
+        <p>KickOff is provided on an <strong>"as is" and "as available" basis</strong> without warranties of any kind, either express or implied. We do not warrant that:</p>
+        <ul>
+          <li>The platform will be uninterrupted, error-free, or secure at all times</li>
+          <li>Results or standings displayed are always accurate or up to date</li>
+          <li>The platform will be available in all geographic locations</li>
+          <li>Any defects or errors will be corrected</li>
+        </ul>
+        <p>We reserve the right to modify, suspend, or discontinue any part of the platform at any time without notice.</p>
+      </div>
+
+      <!-- 9 -->
+      <div class="section" id="s9">
+        <div class="section-num">Section 09</div>
+        <h2 class="section-title">Limitation of Liability</h2>
+        <p>To the maximum extent permitted by applicable law, KickOff and its operators shall not be liable for any indirect, incidental, special, consequential, or punitive damages arising from:</p>
+        <ul>
+          <li>Your use or inability to use the platform</li>
+          <li>Any errors, mistakes, or inaccuracies of content</li>
+          <li>Unauthorised access to or alteration of your data</li>
+          <li>Loss or corruption of data</li>
+          <li>Disputes between users arising from league play</li>
+        </ul>
+        <p>Our total liability to you for any claim arising out of or relating to these terms shall not exceed the amount you paid to us in the twelve months preceding the claim (or zero if you have not paid anything).</p>
+      </div>
+
+      <!-- 10 -->
+      <div class="section" id="s10">
+        <div class="section-num">Section 10</div>
+        <h2 class="section-title">Termination</h2>
+        <p>We may suspend or terminate your account and access to KickOff at any time, with or without cause or notice, including for breach of these Terms.</p>
+        <p>You may delete your account at any time from your account settings. Upon deletion, your personal data will be handled in accordance with our Privacy Policy.</p>
+        <p>Sections that by their nature should survive termination — including disclaimers, limitations of liability, and intellectual property provisions — will continue to apply after your account is closed.</p>
+      </div>
+
+      <!-- 11 -->
+      <div class="section" id="s11">
+        <div class="section-num">Section 11</div>
+        <h2 class="section-title">Changes to These Terms</h2>
+        <p>We reserve the right to update or modify these Terms of Service at any time. When we make material changes, we will update the "Last Updated" date at the top of this page and notify active users where possible.</p>
+        <p>Your continued use of KickOff after any changes constitutes your acceptance of the new terms. We encourage you to review these terms periodically.</p>
+      </div>
+
+      <!-- 12 -->
+      <div class="section" id="s12">
+        <div class="section-num">Section 12</div>
+        <h2 class="section-title">Contact</h2>
+        <p>If you have questions about these Terms of Service, please contact us:</p>
+        <div class="highlight-box">
+          <strong>KickOff Support</strong><br/>
+          Email: <span style="color:var(--blue)">support@kickoff.gg</span><br/>
+          For legal matters: <span style="color:var(--blue)">legal@kickoff.gg</span>
+        </div>
+        <p>We aim to respond to all enquiries within 5 business days.</p>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <span>© 2025 KickOff. All rights reserved.</span>
+    <a href="terms.html">Terms of Service</a>
+    <a href="privacy.html">Privacy Policy</a>
+    <a href="index.html">Home</a>
+  </footer>
+
+  <script src="js/legal.js"></script>
+</body>
+</html>
