@@ -20,7 +20,7 @@ const errorHandler = require('./middleware/errorHandler');
 
 const app  = express();
 app.set('trust proxy', 1); // trust first proxy (if behind a proxy like Heroku, AWS ELB, etc.)
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 10000;
 
 // ════════════════════════════════
 // GLOBAL MIDDLEWARE
