@@ -430,14 +430,19 @@
     @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    /* ── RESPONSIVE ── */
     @media (max-width: 768px) {
-      .nav-links { display: none; }
-      .page { padding: 1.5rem 1rem 4rem; }
-      .fixture-row { grid-template-columns: 1fr 80px 1fr; }
-      .fixture-action { position: static; transform: none; display: flex; justify-content: center; margin-top: 0.5rem; grid-column: 1/-1; }
-      .score-inputs { grid-template-columns: 1fr 30px 1fr; }
-    }
+  .nav-links {
+    flex-direction: column;
+    position: absolute;
+    top: 62px;
+    left: 0;
+    right: 0;
+    background: var(--navy);
+    padding: 1rem;
+    border-bottom: 1px solid var(--border);
+    z-index: 1000;
+  }
+}
   </style>
 </head>
 <body>

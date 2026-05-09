@@ -33,6 +33,10 @@ function toggleNotifPanel() {
   panel.classList.toggle('open');
 }
 
+function toggleMenu() {
+  document.querySelector('.nav-links').classList.toggle('open');
+}
+
 document.addEventListener('click', (e) => {
   const avatar = document.getElementById('avatar-btn');
   const dd     = document.getElementById('avatar-dropdown');

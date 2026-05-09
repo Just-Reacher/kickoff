@@ -700,13 +700,25 @@
     @keyframes spin { to { transform: rotate(360deg); } }
 
     /* ── RESPONSIVE ── */
-    @media (max-width: 768px) {
-      .nav-links { display: none; }
+@media (max-width: 768px) {
+  .nav-links {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 62px;
+    left: 0;
+    right: 0;
+    background: var(--navy);
+    padding: 1rem;
+    border-bottom: 1px solid var(--border);
       .form-grid-2 { grid-template-columns: 1fr; }
       .format-grid { grid-template-columns: 1fr; }
       .page { padding: 2rem 1rem 4rem; }
       .invite-code { font-size: 1.8rem; }
     }
+  }
+
+
   </style>
 </head>
 <body>

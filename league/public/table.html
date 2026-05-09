@@ -347,18 +347,19 @@
     @keyframes spin    { to { transform: rotate(360deg); } }
 
     /* ── RESPONSIVE ── */
-    @media (max-width: 900px) {
-      .nav-links { display: none; }
-      /* hide some columns on mobile */
-      .table-head,
-      .table-row {
-        grid-template-columns: 32px 1fr 32px 32px 42px 48px;
-      }
-      .col-hide { display: none; }
-      .page { padding: 1.5rem 1rem 4rem; }
-      .summary-row { grid-template-columns: 1fr 1fr; }
-    }
-
+@media (max-width: 768px) {
+  .nav-links {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 62px;
+    left: 0;
+    right: 0;
+    background: var(--navy);
+    padding: 1rem;
+    border-bottom: 1px solid var(--border);
+  }
+}
     @media (max-width: 500px) {
       .table-head,
       .table-row {

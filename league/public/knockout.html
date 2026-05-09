@@ -402,11 +402,18 @@
 
     /* ── RESPONSIVE ── */
     @media (max-width: 768px) {
-      .nav-links { display: none; }
-      .page { padding: 1.5rem 1rem 4rem; }
-      .round-col { min-width: 160px; }
-      .match-team-name { max-width: 80px; }
-    }
+  .nav-links {
+    flex-direction: column;
+    position: absolute;
+    top: 62px;
+    left: 0;
+    right: 0;
+    background: var(--navy);
+    padding: 1rem;
+    border-bottom: 1px solid var(--border);
+    z-index: 1000;
+  }
+}
   </style>
 </head>
 <body>

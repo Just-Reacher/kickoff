@@ -469,13 +469,20 @@
     @keyframes spin    { to { transform: rotate(360deg); } }
 
     /* ── RESPONSIVE ── */
-    @media (max-width: 900px) {
-      .nav-links { display: none; }
-      .main-grid { grid-template-columns: 1fr; }
-      .stat-grid { grid-template-columns: repeat(3, 1fr); }
-      .hero-band { flex-direction: column; align-items: flex-start; gap: 1rem; }
-      .page { padding: 1.5rem 1rem 4rem; }
-    }
+   @media (max-width: 768px) {
+   .nav-links {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 62px;
+    left: 0;
+    right: 0;
+    background: var(--navy);
+    padding: 1rem;
+    border-bottom: 1px solid var(--border);
+  }
+}
+
 
     @media (max-width: 500px) {
       .stat-grid { grid-template-columns: 1fr 1fr; }
