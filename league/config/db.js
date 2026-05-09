@@ -7,9 +7,11 @@ const pool = new Pool({
   },
   keepAlive: true,
   max: 5,
-  idleTimeoutMillis: 20000,
-  connectionTimeoutMillis: 15000,
+  idleTimeoutMillis: 30000,
+  connectionTimeoutMillis: 15000
 });
+
+module.exports = pool;
 
 // ── Test connection ──
 pool.connect()
@@ -20,7 +22,7 @@ pool.connect()
   .catch(err => {
     console.error('❌ Database connection failed:', err.message);
   });
-  
+
 // ── Graceful shutdown ──
 process.on('SIGINT', () => pool.end(() => process.exit(0)));
 process.on('SIGTERM', () => pool.end(() => process.exit(0)));
